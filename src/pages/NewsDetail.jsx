@@ -87,7 +87,7 @@ export default function NewsDetail() {
                         <div className="max-w-none">
                             <div
                                 className="rich-text-content text-slate-300 text-lg leading-relaxed mb-12"
-                                dangerouslySetInnerHTML={{ __html: article.content }}
+                                dangerouslySetInnerHTML={{ __html: article.content || article.summary || '' }}
                             />
                         </div>
 
@@ -139,7 +139,7 @@ export default function NewsDetail() {
                             >
                                 <div className="relative h-48 overflow-hidden">
                                     <img
-                                        src={item.image}
+                                        src={item.image || 'https://images.unsplash.com/photo-1675271591211-126ad94e495d?auto=format&fit=crop&q=80&w=800'}
                                         alt={item.title}
                                         className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                                     />

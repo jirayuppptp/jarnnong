@@ -66,7 +66,7 @@ export default function AINews() {
                                     {item.title}
                                 </h2>
                                 <p className="text-slate-400 text-sm leading-relaxed mb-8 line-clamp-3 font-light">
-                                    {item.content.replace(/<[^>]*>?/gm, '')}
+                                    {(item.content || item.summary || '').replace(/<[^>]*>?/gm, '')}
                                 </p>
                                 <div className="flex items-center gap-2 text-primary font-bold text-xs uppercase tracking-widest group-hover:gap-3 transition-all">
                                     อ่านรายละเอียด
