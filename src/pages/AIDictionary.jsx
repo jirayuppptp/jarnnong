@@ -5,45 +5,12 @@ export default function AIDictionary() {
     const [search, setSearch] = useState('')
 
     useEffect(() => {
-        const savedTerms = localStorage.getItem('aiTerms')
+        const savedTerms = localStorage.getItem('jarnnong_dict')
         if (savedTerms) {
             setTerms(JSON.parse(savedTerms))
         } else {
-            // Mock data if empty
-            const mockTerms = [
-                {
-                    id: 1,
-                    term: 'Generative AI',
-                    definition: 'ระบบ AI ที่มีความสามารถในการ "สร้าง" เนื้อหาใหม่ๆ ไม่ว่าจะเป็นข้อความ รูปภาพ วิดีโอ หรือเสียง ผ่านการเรียนรู้จากข้อมูลมหาศาล',
-                    category: 'Core Concepts'
-                },
-                {
-                    id: 2,
-                    term: 'LLM (Large Language Model)',
-                    definition: 'โมเดลภาษาขนาดใหญ่ที่ถูกฝึกฝนด้วยข้อความจำนวนมาก เพื่อให้สามารถเข้าใจและตอบโต้อย่างเป็นธรรมชาติเหมือนมนุษย์ เช่น GPT-4, Claude 3',
-                    category: 'Technical'
-                },
-                {
-                    id: 3,
-                    term: 'Prompt Engineering',
-                    definition: 'ศาสตร์และศิลป์ในการออกแบบ "คำสั่ง" เพื่อให้ AI แสดงผลลัพธ์ออกมาได้ตามต้องการอย่างแม่นยำที่สุด',
-                    category: 'Skills'
-                },
-                {
-                    id: 4,
-                    term: 'Deep Learning',
-                    definition: 'สาขาหนึ่งของ Machine Learning ที่ใช้โครงข่ายประสาทเทียมหลายชั้น (Neural Networks) ในการเลียนแบบกระบวนการเรียนรู้ของสมองมนุษย์',
-                    category: 'Technical'
-                },
-                {
-                    id: 5,
-                    term: 'Hallucination',
-                    definition: 'ปรากฏการณ์ที่ AI สร้างข้อมูลที่ดูน่าเชื่อถือขึ้นมาเองแต่ "ไม่เป็นความจริง" หรือมโนขึ้นมานั่นเอง',
-                    category: 'Behavior'
-                }
-            ]
-            setTerms(mockTerms)
-            localStorage.setItem('aiTerms', JSON.stringify(mockTerms))
+            // Data will be updated from Admin
+            setTerms([])
         }
     }, [])
 

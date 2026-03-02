@@ -4,7 +4,7 @@ export default function ManageDictionary() {
     const [items, setItems] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingItem, setEditingItem] = useState(null);
-    const [formData, setFormData] = useState({ term: '', category: 'General AI', meaning: '' });
+    const [formData, setFormData] = useState({ term: '', category: 'General AI', definition: '' });
 
     useEffect(() => {
         const savedDict = localStorage.getItem('jarnnong_dict');
@@ -12,8 +12,8 @@ export default function ManageDictionary() {
             setItems(JSON.parse(savedDict));
         } else {
             const mock = [
-                { id: 1, term: 'LLM', category: 'Model Architecture', meaning: 'Large Language Model หรือโมเดลภาษาขนาดใหญ่ที่ถูกฝึกฝนด้วยข้อมูลมหาศาล' },
-                { id: 2, term: 'Prompt Engineering', category: 'Usage', meaning: 'ศาสตร์ของการออกแบบคำสั่งเพื่อให้ AI แสดงผลลัพธ์ที่ตรงใจที่สุด' },
+                { id: 1, term: 'LLM', category: 'Model Architecture', definition: 'Large Language Model หรือโมเดลภาษาขนาดใหญ่ที่ถูกฝึกฝนด้วยข้อมูลมหาศาล' },
+                { id: 2, term: 'Prompt Engineering', category: 'Usage', definition: 'ศาสตร์ของการออกแบบคำสั่งเพื่อให้ AI แสดงผลลัพธ์ที่ตรงใจที่สุด' },
             ];
             setItems(mock);
             localStorage.setItem('jarnnong_dict', JSON.stringify(mock));
@@ -31,7 +31,7 @@ export default function ManageDictionary() {
             setFormData({ ...item });
         } else {
             setEditingItem(null);
-            setFormData({ term: '', category: 'General AI', meaning: '' });
+            setFormData({ term: '', category: 'General AI', definition: '' });
         }
         setIsModalOpen(true);
     };
@@ -77,7 +77,7 @@ export default function ManageDictionary() {
                         <tr className="border-b border-white/5 bg-white/5 text-[10px] uppercase tracking-widest text-[#0df2f2] font-bold">
                             <th className="px-6 py-4">คำศัพท์ (Term)</th>
                             <th className="px-6 py-4">หมวดหมู่</th>
-                            <th className="px-6 py-4">คำอธิบายความหมาย</th>
+                            <th className="px-6 py-4">ความหมาย</th>
                             <th className="px-6 py-4 text-right">จัดการ</th>
                         </tr>
                     </thead>
@@ -90,7 +90,7 @@ export default function ManageDictionary() {
                                         {item.category}
                                     </span>
                                 </td>
-                                <td className="px-6 py-4 text-sm text-slate-400 max-w-md truncate">{item.meaning}</td>
+                                <td className="px-6 py-4 text-sm text-slate-400 max-w-md truncate">{item.definition}</td>
                                 <td className="px-6 py-4 text-right space-x-2">
                                     <button onClick={() => handleOpenModal(item)} className="p-2 text-slate-400 hover:text-white transition-colors">
                                         <span className="material-symbols-outlined text-xl">edit</span>
@@ -137,8 +137,8 @@ export default function ManageDictionary() {
                                 <textarea
                                     required
                                     rows="4"
-                                    value={formData.meaning}
-                                    onChange={(e) => setFormData({ ...formData, meaning: e.target.value })}
+                                    value={formData.definition}
+                                    onChange={(e) => setFormData({ ...formData, definition: e.target.value })}
                                     className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-[#0df2f2]/50 text-sm"
                                 ></textarea>
                             </div>

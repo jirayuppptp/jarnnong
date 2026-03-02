@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { NavLink } from 'react-router-dom'
 
 const navItems = [
@@ -12,8 +12,17 @@ const navItems = [
 export default function Header() {
     const [isMenuOpen, setIsMenuOpen] = useState(false)
 
+    useEffect(() => {
+        if (isMenuOpen) {
+            document.body.style.overflow = 'hidden'
+        } else {
+            document.body.style.overflow = 'unset'
+        }
+    }, [isMenuOpen])
+
     return (
-        <header className="sticky top-0 z-50 w-full border-b border-white/5 bg-[#05070A]/80 backdrop-blur-md">
+        <header className={`sticky top-0 z-50 w-full border-b border-white/5 transition-colors duration-300 ${isMenuOpen ? 'bg-[#05070A]' : 'bg-[#05070A]/80 backdrop-blur-md'
+            }`}>
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex justify-between items-center h-16">
                     {/* Logo + Nav */}
@@ -73,13 +82,23 @@ export default function Header() {
 
             {/* Mobile Menu Overlay */}
             <div className={`
-                md:hidden fixed inset-0 top-16 bg-[#05070A] z-40 transition-all duration-500 ease-in-out
-                ${isMenuOpen ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4 pointer-events-none'}
+                md:hidden fixed inset-0 bg-[#05070A] z-[100] transition-all duration-500 ease-in-out
+                ${isMenuOpen ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-full pointer-events-none'}
             `}>
-                {/* Decorative background glow */}
-                <div className="absolute top-0 right-0 w-64 h-64 bg-primary/10 rounded-full blur-[100px] -mr-20 -mt-20"></div>
+                {/* Close Button Inside Mobile Menu */}
+                <div className="flex justify-end p-4">
+                    <button
+                        onClick={() => setIsMenuOpen(false)}
+                        className="p-2 text-white hover:text-primary transition-colors focus:outline-none"
+                    >
+                        <span className="material-symbols-outlined text-4xl">close</span>
+                    </button>
+                </div>
 
-                <nav className="relative z-10 flex flex-col p-6 pt-10">
+                {/* Decorative background glow */}
+                <div className="absolute top-0 right-0 w-64 h-64 bg-primary/10 rounded-full blur-[100px] -mr-20 -mt-20 pointer-events-none"></div>
+
+                <nav className="relative z-10 flex flex-col p-6 pt-2">
                     <div className="space-y-1">
                         {navItems.map((item, index) => (
                             <NavLink
@@ -88,9 +107,9 @@ export default function Header() {
                                 onClick={() => setIsMenuOpen(false)}
                                 style={{ transitionDelay: `${index * 50}ms` }}
                                 className={({ isActive }) =>
-                                    `flex items-center justify-between text-base font-medium py-3 px-4 rounded-xl transition-all duration-300 ${isMenuOpen ? 'translate-x-0 opacity-100' : '-translate-x-4 opacity-0'
+                                    `flex items-center justify-between text-lg font-medium py-4 px-4 rounded-xl transition-all duration-300 ${isMenuOpen ? 'translate-x-0 opacity-100' : '-translate-x-4 opacity-0'
                                     } ${isActive && item.to !== '#'
-                                        ? 'bg-primary/10 text-primary'
+                                        ? 'bg-primary/10 text-primary border border-primary/20'
                                         : 'text-slate-300 hover:bg-white/5 hover:text-white'
                                     }`
                                 }
@@ -112,7 +131,7 @@ export default function Header() {
                             <span className="material-symbols-outlined text-xl">admin_panel_settings</span>
                             เข้าสู่ระบบแอดมิน
                         </NavLink>
-                        <p className="text-center text-xs text-slate-500 mt-6 font-medium tracking-wider uppercase">
+                        <p className="text-center text-sm text-slate-500 mt-8 font-medium tracking-wider uppercase">
                             JarnNong AI Hub © 2024
                         </p>
                     </div>

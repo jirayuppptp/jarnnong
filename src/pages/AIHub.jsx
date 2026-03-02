@@ -1,7 +1,18 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 function AIHub() {
     const [email, setEmail] = useState('');
+    const [tools, setTools] = useState([]);
+
+    useEffect(() => {
+        const savedTools = localStorage.getItem('jarnnong_ai_tools');
+        if (savedTools) {
+            setTools(JSON.parse(savedTools));
+        }
+    }, []);
+
+    // Group tools by category for the directory
+    const categories = [...new Set(tools.map(t => t.category))];
 
     return (
         <div className="bg-[#050d0d] text-slate-200 min-h-screen font-sans">
@@ -97,54 +108,42 @@ function AIHub() {
                         </a>
                     </div>
 
-                    {/* Cards */}
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                        {[
-                            {
-                                icon: 'palette',
-                                title: 'Creative & Media',
-                                desc: 'ปลดปล่อยจินตนาการด้วยเครื่องมือสร้างรูปภาพ วิดีโอ และงานกราฟิกอัจฉริยะแบบมืออาชีพ',
-                                items: ['Image Generation', 'Video Synthesis', 'Design Automation'],
-                            },
-                            {
-                                icon: 'terminal',
-                                title: 'Web & Coding',
-                                desc: 'สร้างสรรค์ผลงานดิจิทัลด้วย No-code และ Coding Assistants ที่ช่วยให้คุณทำงานได้ไวขึ้น',
-                                items: ['Code Completion', 'No-code App Builders', 'Website Generators'],
-                            },
-                            {
-                                icon: 'task_alt',
-                                title: 'Productivity',
-                                desc: 'ทำงานเร็วขึ้น 10 เท่านั้นด้วยระบบวิจัย เอกสาร และแชทบอทอัจฉริยะที่ช่วยจัดการงานยาก',
-                                items: ['AI Chatbots', 'Document Summarization', 'Research Assistants'],
-                            },
-                        ].map((card, index) => (
-                            <div
-                                key={card.title}
-                                className={`group relative p-10 rounded-3xl bg-[#0a1a1a] border border-[#0df2f2]/10 hover:border-[#0df2f2]/50 transition-all duration-300 animate-fade-up ${index === 0 ? 'animate-delay-100' : index === 1 ? 'animate-delay-200' : 'animate-delay-300'
-                                    }`}
-                            >
-                                <div className="absolute inset-0 bg-gradient-to-br from-[#0df2f2]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity rounded-3xl" />
-                                <div className="relative">
-                                    <div className="w-16 h-16 bg-[#0df2f2]/10 rounded-2xl flex items-center justify-center mb-8 text-[#0df2f2] group-hover:scale-110 transition-transform">
-                                        <span className="material-symbols-outlined text-4xl">{card.icon}</span>
+                    {/* Cards - Dynamic from Admin */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        {tools.length > 0 ? (
+                            tools.map((tool, index) => (
+                                <a
+                                    key={tool.id}
+                                    href={tool.url}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    className={`group relative p-8 rounded-3xl bg-[#0a1a1a] border border-[#0df2f2]/10 hover:border-[#0df2f2]/50 transition-all duration-300 animate-fade-up`}
+                                    style={{ animationDelay: `${(index + 1) * 100}ms` }}
+                                >
+                                    <div className="absolute inset-0 bg-gradient-to-br from-[#0df2f2]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity rounded-3xl" />
+                                    <div className="relative">
+                                        <div className="w-14 h-14 bg-[#0df2f2]/10 rounded-2xl flex items-center justify-center mb-6 text-[#0df2f2] group-hover:scale-110 transition-transform">
+                                            <span className="material-symbols-outlined text-3xl">{tool.icon || 'auto_awesome'}</span>
+                                        </div>
+                                        <div className="mb-2">
+                                            <span className="text-[10px] font-bold text-[#0df2f2] uppercase tracking-widest bg-[#0df2f2]/10 px-2 py-1 rounded-md border border-[#0df2f2]/20">
+                                                {tool.category}
+                                            </span>
+                                        </div>
+                                        <h3 className="text-xl font-bold text-white mb-3 font-display">{tool.name}</h3>
+                                        <p className="text-slate-400 text-sm leading-relaxed mb-6 line-clamp-2">{tool.description}</p>
+                                        <div className="flex items-center gap-2 text-[#0df2f2] text-xs font-bold uppercase tracking-wider group-hover:gap-3 transition-all">
+                                            เยี่ยมชมเว็บไซต์
+                                            <span className="material-symbols-outlined text-sm">arrow_forward</span>
+                                        </div>
                                     </div>
-                                    <h3 className="text-2xl font-bold text-white mb-4 font-display">{card.title}</h3>
-                                    <p className="text-slate-400 mb-8 text-lg leading-relaxed">{card.desc}</p>
-                                    <ul className="space-y-4">
-                                        {card.items.map(item => (
-                                            <li key={item} className="flex items-center gap-3 text-base text-slate-300">
-                                                <span
-                                                    className="size-2 w-2 h-2 rounded-full bg-[#0df2f2] shrink-0"
-                                                    style={{ boxShadow: '0 0 8px rgba(13,242,242,0.8)' }}
-                                                />
-                                                {item}
-                                            </li>
-                                        ))}
-                                    </ul>
-                                </div>
+                                </a>
+                            ))
+                        ) : (
+                            <div className="col-span-full text-center py-20 bg-white/5 rounded-3xl border border-white/10">
+                                <p className="text-slate-500 italic">ยังไม่มีข้อมูลเครื่องมือ AI ในขณะนี้...</p>
                             </div>
-                        ))}
+                        )}
                     </div>
                 </div>
             </section>

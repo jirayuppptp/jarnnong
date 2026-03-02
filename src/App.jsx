@@ -12,6 +12,7 @@ import AdminDashboard from './pages/admin/AdminDashboard'
 import ManageAITools from './pages/admin/ManageAITools'
 import ManageNews from './pages/admin/ManageNews'
 import ManageDictionary from './pages/admin/ManageDictionary'
+import NewsDetail from './pages/NewsDetail'
 import AdminLayout from './components/AdminLayout'
 import { AuthProvider } from './context/AuthContext'
 import ProtectedRoute from './components/ProtectedRoute'
@@ -30,6 +31,7 @@ function AppContent() {
           <Route path="/about" element={<About />} />
           <Route path="/ai-hub" element={<AIHub />} />
           <Route path="/ai-news" element={<AINews />} />
+          <Route path="/ai-news/:id" element={<NewsDetail />} />
           <Route path="/ai-terms" element={<AIDictionary />} />
 
           {/* Admin Routes */}
