@@ -5,8 +5,8 @@ const navItems = [
     { label: 'หน้าแรก', to: '/' },
     { label: 'จารย์โหน่ง', to: '/about' },
     { label: 'สารบัญเครื่องมือ AI', to: '/ai-hub' },
-    { label: 'ข่าวสาร AI', to: '#news' },
-    { label: 'พจนานุกรม AI', to: '#dictionary' },
+    { label: 'ข่าวสาร AI', to: '/ai-news' },
+    { label: 'พจนานุกรม AI', to: '/ai-terms' },
 ]
 
 export default function Header() {

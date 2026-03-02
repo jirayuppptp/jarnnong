@@ -5,6 +5,8 @@ import Footer from './components/Footer'
 import Home from './pages/Home'
 import About from './pages/About'
 import AIHub from './pages/AIHub'
+import AINews from './pages/AINews'
+import AIDictionary from './pages/AIDictionary'
 import AdminLogin from './pages/admin/AdminLogin'
 import AdminDashboard from './pages/admin/AdminDashboard'
 import ManageAITools from './pages/admin/ManageAITools'
@@ -27,6 +29,8 @@ function AppContent() {
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />
           <Route path="/ai-hub" element={<AIHub />} />
+          <Route path="/ai-news" element={<AINews />} />
+          <Route path="/ai-terms" element={<AIDictionary />} />
 
           {/* Admin Routes */}
           <Route path="/admin/login" element={<AdminLogin />} />
