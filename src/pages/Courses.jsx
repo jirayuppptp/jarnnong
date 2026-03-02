@@ -8,10 +8,16 @@ export default function Courses() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const q = query(collection(db, 'courses'), orderBy('createdAt', 'desc'));
+        const q = query(collection(db, 'courses'));
         const unsubscribe = onSnapshot(q, (snapshot) => {
             const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-            setCourses(data);
+            // Sort in memory to avoid missing field exclusion
+            const sortedData = data.sort((a, b) => {
+                const dateA = a.createdAt || '';
+                const dateB = b.createdAt || '';
+                return dateB.localeCompare(dateA);
+            });
+            setCourses(sortedData);
             setLoading(false);
         }, (error) => {
             console.error("Error fetching courses:", error);

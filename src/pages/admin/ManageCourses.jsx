@@ -37,13 +37,16 @@ export default function ManageCourses() {
     });
 
     useEffect(() => {
-        const q = query(collection(db, 'courses'), orderBy('createdAt', 'desc'));
+        const q = query(collection(db, 'courses'));
         const unsubscribe = onSnapshot(q, (snapshot) => {
-            const coursesData = snapshot.docs.map(doc => ({
-                ...doc.data(),
-                id: doc.id
-            }));
-            setCourses(coursesData);
+            const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            // Sort in memory to avoid missing field exclusion
+            const sortedData = data.sort((a, b) => {
+                const dateA = a.createdAt || '';
+                const dateB = b.createdAt || '';
+                return dateB.localeCompare(dateA);
+            });
+            setCourses(sortedData);
         }, (error) => {
             console.error("Error fetching courses:", error);
         });
@@ -235,8 +238,8 @@ export default function ManageCourses() {
                                     </td>
                                     <td className="px-6 py-4 text-center">
                                         <span className={`px-2 py-1 rounded-md text-[10px] font-bold uppercase ${course.level === 'Beginner' ? 'bg-green-500/10 text-green-400 border border-green-500/20' :
-                                                course.level === 'Intermediate' ? 'bg-yellow-500/10 text-yellow-400 border border-yellow-500/20' :
-                                                    'bg-red-500/10 text-red-400 border border-red-500/20'
+                                            course.level === 'Intermediate' ? 'bg-yellow-500/10 text-yellow-400 border border-yellow-500/20' :
+                                                'bg-red-500/10 text-red-400 border border-red-500/20'
                                             }`}>
                                             {course.level || 'Beginner'}
                                         </span>
