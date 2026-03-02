@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { NavLink } from 'react-router-dom'
+import { useAuth } from '../context/AuthContext'
 
 const navItems = [
     { label: 'หน้าแรก', to: '/' },
@@ -11,6 +12,7 @@ const navItems = [
 
 export default function Header() {
     const [isMenuOpen, setIsMenuOpen] = useState(false)
+    const { user, isAuthenticated } = useAuth()
 
     useEffect(() => {
         if (isMenuOpen) {
@@ -63,9 +65,22 @@ export default function Header() {
                                 type="text"
                             />
                         </div>
-                        <NavLink to="/admin/login" className="hidden sm:inline-flex btn-primary px-5 py-2 text-sm text-center">
-                            เข้าสู่ระบบ
-                        </NavLink>
+
+                        {isAuthenticated ? (
+                            <NavLink to="/admin/dashboard" className="hidden sm:flex items-center gap-3 bg-white/5 hover:bg-white/10 px-4 py-2 rounded-xl transition-all border border-white/5 group">
+                                <div className="text-right hidden xl:block">
+                                    <p className="text-[10px] font-bold text-white leading-none">ยินดีต้อนรับ</p>
+                                    <p className="text-[8px] text-primary uppercase mt-1">Admin Dashboard</p>
+                                </div>
+                                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-blue-500 flex items-center justify-center shadow-lg shadow-primary/20 group-hover:scale-105 transition-transform">
+                                    <span className="material-symbols-outlined text-slate-900 text-lg font-bold">dashboard</span>
+                                </div>
+                            </NavLink>
+                        ) : (
+                            <NavLink to="/admin/login" className="hidden sm:inline-flex btn-primary px-5 py-2 text-sm text-center">
+                                เข้าสู่ระบบ
+                            </NavLink>
+                        )}
 
                         {/* Hamburger Button */}
                         <button
@@ -123,14 +138,25 @@ export default function Header() {
                     </div>
 
                     <div className={`mt-10 transition-all duration-500 delay-300 ${isMenuOpen ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}`}>
-                        <NavLink
-                            to="/admin/login"
-                            onClick={() => setIsMenuOpen(false)}
-                            className="btn-primary w-full py-4 text-center flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(0,242,255,0.15)] active:scale-[0.98]"
-                        >
-                            <span className="material-symbols-outlined text-xl">admin_panel_settings</span>
-                            เข้าสู่ระบบแอดมิน
-                        </NavLink>
+                        {isAuthenticated ? (
+                            <NavLink
+                                to="/admin/dashboard"
+                                onClick={() => setIsMenuOpen(false)}
+                                className="btn-primary w-full py-4 text-center flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(0,242,255,0.15)] active:scale-[0.98]"
+                            >
+                                <span className="material-symbols-outlined text-xl">admin_panel_settings</span>
+                                ไปที่แดชบอร์ด
+                            </NavLink>
+                        ) : (
+                            <NavLink
+                                to="/admin/login"
+                                onClick={() => setIsMenuOpen(false)}
+                                className="btn-primary w-full py-4 text-center flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(0,242,255,0.15)] active:scale-[0.98]"
+                            >
+                                <span className="material-symbols-outlined text-xl">login</span>
+                                เข้าสู่ระบบแอดมิน
+                            </NavLink>
+                        )}
                         <p className="text-center text-sm text-slate-500 mt-8 font-medium tracking-wider uppercase">
                             JarnNong AI Hub © 2024
                         </p>
