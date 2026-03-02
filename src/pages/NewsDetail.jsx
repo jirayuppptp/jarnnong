@@ -16,6 +16,15 @@ export default function NewsDetail() {
                 setArticle(found)
                 // Get other news as related news
                 setRelatedNews(allNews.filter(item => item.id.toString() !== id).slice(0, 3))
+
+                // Increment realViews
+                const updatedNews = allNews.map(item => {
+                    if (item.id.toString() === id) {
+                        return { ...item, realViews: (item.realViews || 0) + 1 };
+                    }
+                    return item;
+                });
+                localStorage.setItem('jarnnong_news', JSON.stringify(updatedNews));
             } else {
                 navigate('/ai-news')
             }
@@ -48,7 +57,7 @@ export default function NewsDetail() {
                         {article.category}
                     </div>
 
-                    <h1 className="text-4xl md:text-6xl font-black text-white mb-8 leading-tight animate-fade-up">
+                    <h1 className="text-4xl md:text-6xl font-black text-white mb-8 leading-[1.15] animate-fade-up">
                         {article.title}
                     </h1>
 
@@ -63,7 +72,7 @@ export default function NewsDetail() {
                         </div>
                         <div className="flex items-center gap-2">
                             <span className="material-symbols-outlined text-sm text-primary">visibility</span>
-                            อ่านแล้ว 1.2k ครั้ง
+                            อ่านแล้ว {((article.initialViews || 0) + (article.realViews || 0)).toLocaleString()} ครั้ง
                         </div>
                     </div>
                 </div>

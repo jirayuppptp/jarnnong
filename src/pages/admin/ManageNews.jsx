@@ -75,7 +75,12 @@ function ManageNews() {
             const updated = news.map(n => n.id === editingNews.id ? { ...formData, id: n.id } : n);
             saveToLocalStorage(updated);
         } else {
-            const newItem = { ...formData, id: Date.now() };
+            const newItem = {
+                ...formData,
+                id: Date.now(),
+                initialViews: Math.floor(Math.random() * (2500 - 800 + 1)) + 800,
+                realViews: 0
+            };
             saveToLocalStorage([...news, newItem]);
         }
     };
@@ -143,7 +148,9 @@ function ManageNews() {
                             <tr className="border-b border-white/5 bg-white/5 text-[10px] uppercase tracking-widest text-[#0df2f2] font-bold">
                                 <th className="px-6 py-4">รูปภาพ</th>
                                 <th className="px-6 py-4">หัวข้อข่าว</th>
-                                <th className="px-6 py-4">หมวดหมู่</th>
+                                <th className="px-6 py-4 text-center">ยอดเริ่มต้น (สุ่ม)</th>
+                                <th className="px-6 py-4 text-center">คลิกจริง</th>
+                                <th className="px-6 py-4 text-center">ยอดรวม</th>
                                 <th className="px-6 py-4">วันที่</th>
                                 <th className="px-6 py-4 text-right">จัดการ</th>
                             </tr>
@@ -158,13 +165,24 @@ function ManageNews() {
                                     </td>
                                     <td className="px-6 py-4">
                                         <span className="font-bold text-white text-sm line-clamp-1">{item.title}</span>
+                                        <div className="mt-1">
+                                            <span className="px-2 py-0.5 rounded-md bg-[#0df2f2]/10 text-[9px] text-[#0df2f2] border border-[#0df2f2]/20 uppercase font-black tracking-tighter">
+                                                {item.category}
+                                            </span>
+                                        </div>
                                     </td>
-                                    <td className="px-6 py-4">
-                                        <span className="px-2 py-1 rounded-md bg-[#0df2f2]/10 text-[10px] text-[#0df2f2] border border-[#0df2f2]/20 uppercase font-bold">
-                                            {item.category}
+                                    <td className="px-6 py-4 text-center text-xs text-slate-400 font-mono">
+                                        {item.initialViews || 0}
+                                    </td>
+                                    <td className="px-6 py-4 text-center text-xs text-[#0df2f2] font-mono font-bold">
+                                        {item.realViews || 0}
+                                    </td>
+                                    <td className="px-6 py-4 text-center">
+                                        <span className="text-sm font-bold text-white">
+                                            {((item.initialViews || 0) + (item.realViews || 0)).toLocaleString()}
                                         </span>
                                     </td>
-                                    <td className="px-6 py-4 text-xs text-slate-300 font-mono italic">{item.date}</td>
+                                    <td className="px-6 py-4 text-xs text-slate-500 font-mono italic">{item.date}</td>
                                     <td className="px-6 py-4 text-right space-x-2">
                                         <button onClick={() => handleOpenModal(item)} className="p-2 text-slate-400 hover:text-white transition-colors">
                                             <span className="material-symbols-outlined text-xl">edit</span>
