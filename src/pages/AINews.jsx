@@ -35,47 +35,54 @@ export default function AINews() {
 
             {/* News Grid */}
             <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-16">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {news.map((item, index) => (
-                        <NavLink
-                            to={`/ai-news/${item.id}`}
-                            key={item.id}
-                            className={`block glass-card overflow-hidden group hover:scale-[1.02] transition-all duration-300 animate-fade-up`}
-                            style={{ animationDelay: `${(index + 3) * 100}ms` }}
-                        >
-                            <div className="relative h-56 overflow-hidden">
-                                <img
-                                    src={item.image || 'https://images.unsplash.com/photo-1675271591211-126ad94e495d?auto=format&fit=crop&q=80&w=800'}
-                                    alt={item.title}
-                                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                                />
-                                <div className="absolute top-4 left-4">
-                                    <span className="bg-primary/90 text-[#05070A] px-3 py-1 rounded-lg text-xs font-bold uppercase tracking-wider backdrop-blur-md">
-                                        {item.category}
-                                    </span>
+                {news.length > 0 ? (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        {news.map((item, index) => (
+                            <NavLink
+                                to={`/ai-news/${item.id}`}
+                                key={item.id}
+                                className={`block glass-card overflow-hidden group hover:scale-[1.02] transition-all duration-300 animate-fade-up`}
+                                style={{ animationDelay: `${(index + 3) * 100}ms` }}
+                            >
+                                <div className="relative h-56 overflow-hidden">
+                                    <img
+                                        src={item.image || 'https://images.unsplash.com/photo-1675271591211-126ad94e495d?auto=format&fit=crop&q=80&w=800'}
+                                        alt={item.title}
+                                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                                    />
+                                    <div className="absolute top-4 left-4">
+                                        <span className="bg-primary/90 text-[#05070A] px-3 py-1 rounded-lg text-xs font-bold uppercase tracking-wider backdrop-blur-md">
+                                            {item.category}
+                                        </span>
+                                    </div>
                                 </div>
-                            </div>
-                            <div className="p-8">
-                                <div className="flex items-center justify-between mb-4">
-                                    <span className="px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-[10px] font-bold uppercase tracking-wider">
-                                        {item.category}
-                                    </span>
-                                    <span className="text-slate-500 text-xs font-mono">{item.date}</span>
+                                <div className="p-8">
+                                    <div className="flex items-center justify-between mb-4">
+                                        <span className="px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-[10px] font-bold uppercase tracking-wider">
+                                            {item.category}
+                                        </span>
+                                        <span className="text-slate-500 text-xs font-mono">{item.date}</span>
+                                    </div>
+                                    <h2 className="text-2xl font-bold text-white mb-4 group-hover:text-primary transition-colors line-clamp-2 leading-tight">
+                                        {item.title}
+                                    </h2>
+                                    <p className="text-slate-400 text-sm leading-relaxed mb-8 line-clamp-3 font-light">
+                                        {(item.content || item.summary || '').replace(/<[^>]*>?/gm, '')}
+                                    </p>
+                                    <div className="flex items-center gap-2 text-primary font-bold text-xs uppercase tracking-widest group-hover:gap-3 transition-all">
+                                        อ่านรายละเอียด
+                                        <span className="material-symbols-outlined text-sm">arrow_forward</span>
+                                    </div>
                                 </div>
-                                <h2 className="text-2xl font-bold text-white mb-4 group-hover:text-primary transition-colors line-clamp-2 leading-tight">
-                                    {item.title}
-                                </h2>
-                                <p className="text-slate-400 text-sm leading-relaxed mb-8 line-clamp-3 font-light">
-                                    {(item.content || item.summary || '').replace(/<[^>]*>?/gm, '')}
-                                </p>
-                                <div className="flex items-center gap-2 text-primary font-bold text-xs uppercase tracking-widest group-hover:gap-3 transition-all">
-                                    อ่านรายละเอียด
-                                    <span className="material-symbols-outlined text-sm">arrow_forward</span>
-                                </div>
-                            </div>
-                        </NavLink>
-                    ))}
-                </div>
+                            </NavLink>
+                        ))}
+                    </div>
+                ) : (
+                    <div className="text-center py-20 bg-white/5 rounded-3xl border border-white/10 animate-fade-up">
+                        <span className="material-symbols-outlined text-5xl text-slate-600 mb-4">newspaper</span>
+                        <p className="text-slate-400 text-lg">ยังไม่มีข่าวสารในขณะนี้...</p>
+                    </div>
+                )}
             </section>
         </div>
     )
