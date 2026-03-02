@@ -73,32 +73,48 @@ export default function Header() {
 
             {/* Mobile Menu Overlay */}
             <div className={`
-                md:hidden fixed inset-0 top-16 bg-[#05070A]/95 backdrop-blur-xl z-40 transition-all duration-300
-                ${isMenuOpen ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-full pointer-events-none'}
+                md:hidden fixed inset-0 top-16 bg-[#05070A] z-40 transition-all duration-500 ease-in-out
+                ${isMenuOpen ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4 pointer-events-none'}
             `}>
-                <nav className="flex flex-col p-6 gap-4">
-                    {navItems.map((item) => (
-                        <NavLink
-                            key={item.label}
-                            to={item.to}
-                            onClick={() => setIsMenuOpen(false)}
-                            className={({ isActive }) =>
-                                `text-lg font-bold py-3 border-b border-white/5 transition-all ${isActive && item.to !== '#' ? 'text-primary pl-4' : 'text-text-secondary hover:text-primary'
-                                }`
-                            }
-                        >
-                            {item.label}
-                        </NavLink>
-                    ))}
-                    <div className="mt-8">
+                {/* Decorative background glow */}
+                <div className="absolute top-0 right-0 w-64 h-64 bg-primary/10 rounded-full blur-[100px] -mr-20 -mt-20"></div>
+
+                <nav className="relative z-10 flex flex-col p-6 pt-10">
+                    <div className="space-y-1">
+                        {navItems.map((item, index) => (
+                            <NavLink
+                                key={item.label}
+                                to={item.to}
+                                onClick={() => setIsMenuOpen(false)}
+                                style={{ transitionDelay: `${index * 50}ms` }}
+                                className={({ isActive }) =>
+                                    `flex items-center justify-between text-base font-medium py-3 px-4 rounded-xl transition-all duration-300 ${isMenuOpen ? 'translate-x-0 opacity-100' : '-translate-x-4 opacity-0'
+                                    } ${isActive && item.to !== '#'
+                                        ? 'bg-primary/10 text-primary'
+                                        : 'text-slate-300 hover:bg-white/5 hover:text-white'
+                                    }`
+                                }
+                            >
+                                <span>{item.label}</span>
+                                <span className={`material-symbols-outlined text-sm opacity-50 transition-transform ${isMenuOpen ? 'scale-100' : 'scale-0'}`}>
+                                    chevron_right
+                                </span>
+                            </NavLink>
+                        ))}
+                    </div>
+
+                    <div className={`mt-10 transition-all duration-500 delay-300 ${isMenuOpen ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}`}>
                         <NavLink
                             to="/admin/login"
                             onClick={() => setIsMenuOpen(false)}
-                            className="btn-primary w-full py-4 text-center flex items-center justify-center gap-2"
+                            className="btn-primary w-full py-4 text-center flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(0,242,255,0.15)] active:scale-[0.98]"
                         >
-                            <span className="material-symbols-outlined">login</span>
-                            เข้าสู่ระบบสำหรับแอดมิน
+                            <span className="material-symbols-outlined text-xl">admin_panel_settings</span>
+                            เข้าสู่ระบบแอดมิน
                         </NavLink>
+                        <p className="text-center text-xs text-slate-500 mt-6 font-medium tracking-wider uppercase">
+                            JarnNong AI Hub © 2024
+                        </p>
                     </div>
                 </nav>
             </div>
