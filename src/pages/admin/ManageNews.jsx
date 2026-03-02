@@ -1,9 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import ReactQuill from 'react-quill-new';
 import 'react-quill-new/dist/quill.snow.css';
 import { compressImage } from '../../utils/imageHelper';
 
 function ManageNews() {
+    const quillRef = useRef(null);
     const [news, setNews] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingNews, setEditingNews] = useState(null);
@@ -92,7 +93,7 @@ function ManageNews() {
         }
     };
 
-    const quillModules = {
+    const quillModules = useMemo(() => ({
         toolbar: {
             container: [
                 [{ 'header': [1, 2, false] }],
@@ -112,9 +113,10 @@ function ManageNews() {
                         if (file) {
                             try {
                                 const compressed = await compressImage(file, 800, 0.6); // Slightly smaller for inline images
-                                const quill = document.querySelector('.ql-editor').__quill;
+                                const quill = quillRef.current.getEditor();
                                 const range = quill.getSelection();
                                 quill.insertEmbed(range.index, 'image', compressed);
+                                quill.setSelection(range.index + 1);
                             } catch (error) {
                                 console.error('Inline image upload failed:', error);
                             }
@@ -123,7 +125,7 @@ function ManageNews() {
                 }
             }
         },
-    };
+    }), []);
 
     return (
         <div className="p-4 md:p-8">
@@ -263,6 +265,7 @@ function ManageNews() {
                             <div className="quill-container">
                                 <label className="block text-xs font-bold text-slate-400 mb-4 uppercase tracking-wider">เนื้อหาข่าว (Rich Text)</label>
                                 <ReactQuill
+                                    ref={quillRef}
                                     theme="snow"
                                     value={formData.content}
                                     onChange={(val) => setFormData({ ...formData, content: val })}
