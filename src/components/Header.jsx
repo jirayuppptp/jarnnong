@@ -51,9 +51,9 @@ export default function Header() {
                                 type="text"
                             />
                         </div>
-                        <button className="btn-primary px-5 py-2 text-sm">
+                        <NavLink to="/admin/login" className="btn-primary px-5 py-2 text-sm text-center">
                             เข้าสู่ระบบ
-                        </button>
+                        </NavLink>
                     </div>
                 </div>
             </div>
