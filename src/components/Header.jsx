@@ -3,9 +3,9 @@ import { NavLink } from 'react-router-dom'
 const navItems = [
     { label: 'หน้าแรก', to: '/' },
     { label: 'จารย์โหน่ง', to: '/about' },
-    { label: 'สารบัญเครื่องมือ AI', to: '#' },
-    { label: 'ข่าวสาร AI', to: '#' },
-    { label: 'พจนานุกรม AI', to: '#' },
+    { label: 'สารบัญเครื่องมือ AI', to: '/ai-hub' },
+    { label: 'ข่าวสาร AI', to: '#news' },
+    { label: 'พจนานุกรม AI', to: '#dictionary' },
 ]
 
 export default function Header() {
