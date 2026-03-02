@@ -3,7 +3,7 @@ import { useAuth } from '../context/AuthContext';
 
 const menuItems = [
     { label: 'Dashboard', icon: 'dashboard', to: '/admin/dashboard' },
-    { label: 'จัดการเครื่องมือ AI', icon: 'auto_fix', to: '/admin/ai-tools' },
+    { label: 'จัดการหลักสูตรอบรม', icon: 'school', to: '/admin/courses' },
     { label: 'จัดการข่าวสาร AI', icon: 'newspaper', to: '/admin/news' },
     { label: 'จัดการพจนานุกรม AI', icon: 'menu_book', to: '/admin/dictionary' },
 ];
