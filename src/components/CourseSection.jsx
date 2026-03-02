@@ -1,83 +1,93 @@
 import { useState, useEffect } from 'react';
-import { NavLink } from 'react-router-dom';
+import { Link } from 'react-router-dom';
+import { db } from '../firebase';
+import { collection, onSnapshot, query, limit } from 'firebase/firestore';
 
 export default function CourseSection() {
     const [courses, setCourses] = useState([]);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const savedCourses = localStorage.getItem('jarnnong_courses');
-        if (savedCourses) {
-            const allCourses = JSON.parse(savedCourses);
-            setCourses(allCourses.slice(0, 3)); // Only show top 3 on home page
-        }
+        const q = query(collection(db, 'courses'), limit(3));
+        const unsubscribe = onSnapshot(q, (snapshot) => {
+            const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            setCourses(data);
+            setLoading(false);
+        });
+        return () => unsubscribe();
     }, []);
 
-    return (
-        <section className="py-24 bg-[#05070A]">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-4">
-                    <div className="animate-fade-up">
-                        <h2 className="text-4xl md:text-5xl font-black text-white mb-6 font-display leading-[1.3]">
-                            หลักสูตรอบรมแนะนำ
-                        </h2>
-                        <p className="text-xl text-text-secondary max-w-2xl font-light">
-                            เริ่มต้นเส้นทาง AI ของคุณด้วยหลักสูตรที่ออกแบบมาเพื่อการใช้งานจริง
-                        </p>
+    if (loading) {
+        return (
+            <section className="py-32 container mx-auto px-6">
+                <div className="animate-pulse flex flex-col gap-8">
+                    <div className="h-10 w-48 bg-white/5 rounded mx-auto"></div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        {[1, 2, 3].map(i => <div key={i} className="h-96 bg-white/5 rounded-3xl"></div>)}
                     </div>
-                    <NavLink
-                        to="/courses"
-                        className="text-primary font-bold flex items-center gap-2 hover:gap-3 transition-all group animate-fade-up"
-                    >
-                        ดูหลักสูตรทั้งหมด
-                        <span className="material-symbols-outlined text-xl">arrow_forward</span>
-                    </NavLink>
+                </div>
+            </section>
+        );
+    }
+
+    if (courses.length === 0) return null;
+
+    return (
+        <section className="py-32 bg-[#050d0d] overflow-hidden relative" id="courses">
+            <div className="absolute top-1/2 left-0 -translate-y-1/2 w-[500px] h-[500px] bg-[#0df2f2]/5 rounded-full blur-[100px]"></div>
+
+            <div className="container mx-auto px-6 relative z-10">
+                <div className="flex flex-col md:flex-row items-end justify-between mb-16 gap-6">
+                    <div data-aos="fade-right">
+                        <span className="text-primary font-mono font-bold text-sm tracking-widest uppercase mb-4 block">Recommended Learning</span>
+                        <h2 className="text-4xl md:text-5xl font-black text-white leading-tight font-display">
+                            หลักสูตรที่ <span className="text-primary">แนะนำ</span> สำหรับคุณ
+                        </h2>
+                    </div>
+                    <Link to="/courses" className="flex items-center gap-2 text-white/50 hover:text-primary transition-colors font-bold uppercase tracking-widest text-xs group" data-aos="fade-left">
+                        ดูทั้งหมด <span className="material-symbols-outlined group-hover:translate-x-1 transition-transform">arrow_forward</span>
+                    </Link>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                    {courses.length > 0 ? (
-                        courses.map((course, index) => (
-                            <NavLink
-                                key={course.id}
-                                to="/courses"
-                                className={`group relative flex flex-col rounded-[2rem] bg-white/[0.02] border border-white/5 overflow-hidden hover:border-primary/30 transition-all duration-500 animate-fade-up`}
-                                style={{ animationDelay: `${(index + 1) * 100}ms` }}
-                            >
-                                <div className="relative h-56 overflow-hidden">
-                                    <img
-                                        src={course.image}
-                                        alt={course.title}
-                                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                                    />
-                                    <div className="absolute inset-0 bg-gradient-to-t from-[#05070A] to-transparent opacity-60" />
-                                    <div className="absolute top-4 left-4">
-                                        <span className="px-3 py-1 rounded-full bg-primary/20 backdrop-blur-md text-primary text-[10px] font-black uppercase tracking-widest border border-primary/20">
-                                            {course.category}
-                                        </span>
-                                    </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    {courses.map((course, idx) => (
+                        <div
+                            key={course.id}
+                            className="group relative bg-card-bg border border-white/5 rounded-3xl p-4 transition-all duration-500 hover:border-primary/30 hover:-translate-y-2 flex flex-col"
+                            data-aos="fade-up"
+                            data-aos-delay={idx * 100}
+                        >
+                            <div className="h-56 rounded-2xl overflow-hidden mb-6 relative">
+                                <img
+                                    src={course.image}
+                                    alt={course.title}
+                                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                                />
+                                <div className="absolute top-4 left-4">
+                                    <span className="px-3 py-1 rounded-full bg-black/50 backdrop-blur-md border border-white/10 text-[10px] font-bold text-primary uppercase tracking-wider">
+                                        {course.category}
+                                    </span>
                                 </div>
-                                <div className="p-8 flex-1 flex flex-col">
-                                    <h3 className="text-xl font-bold text-white mb-4 line-clamp-2 leading-[1.4] group-hover:text-primary transition-colors">
-                                        {course.title}
-                                    </h3>
-                                    <div
-                                        className="text-text-secondary text-sm leading-relaxed mb-6 line-clamp-2 font-light ql-editor !p-0"
-                                        dangerouslySetInnerHTML={{ __html: course.description }}
-                                    />
-                                    <div className="mt-auto flex items-center justify-between">
-                                        <span className="text-primary font-mono font-bold">{course.price} ฿</span>
-                                        <span className="text-xs text-text-secondary flex items-center gap-1">
-                                            <span className="material-symbols-outlined text-sm">schedule</span>
-                                            {course.duration}
-                                        </span>
-                                    </div>
+                            </div>
+
+                            <div className="px-4 pb-4 flex flex-col flex-1">
+                                <h3 className="text-xl font-bold text-white mb-4 line-clamp-2 leading-[1.4] group-hover:text-primary transition-colors">
+                                    {course.title}
+                                </h3>
+                                <div
+                                    className="text-text-secondary text-sm leading-relaxed mb-6 line-clamp-2 font-light ql-editor !p-0"
+                                    dangerouslySetInnerHTML={{ __html: course.description }}
+                                />
+                                <div className="mt-auto flex items-center justify-between">
+                                    <span className="text-primary font-mono font-bold">{course.price} ฿</span>
+                                    <span className="text-xs text-text-secondary flex items-center gap-1">
+                                        <span className="material-symbols-outlined text-sm">schedule</span>
+                                        {course.duration}
+                                    </span>
                                 </div>
-                            </NavLink>
-                        ))
-                    ) : (
-                        <div className="col-span-full text-center py-20 bg-white/[0.02] rounded-3xl border border-white/5">
-                            <p className="text-slate-500 italic">เร็วๆ นี้...</p>
+                            </div>
                         </div>
-                    )}
+                    ))}
                 </div>
             </div>
         </section>

@@ -15,11 +15,11 @@ import {
     writeBatch
 } from 'firebase/firestore';
 
-export default function ManageCourses() {
+export default function ManageAITools() {
     const quillRef = useRef(null);
-    const [courses, setCourses] = useState([]);
+    const [tools, setTools] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [editingCourse, setEditingCourse] = useState(null);
+    const [editingTool, setEditingTool] = useState(null);
     const [loadingImage, setLoadingImage] = useState(false);
     const [isMigrating, setIsMigrating] = useState(false);
 
@@ -27,27 +27,25 @@ export default function ManageCourses() {
         title: '',
         category: '',
         description: '',
-        duration: '',
-        price: '',
         link: '',
         image: ''
     });
 
     useEffect(() => {
-        const q = query(collection(db, 'courses'), orderBy('title', 'asc'));
+        const q = query(collection(db, 'aitools'), orderBy('title', 'asc'));
         const unsubscribe = onSnapshot(q, (snapshot) => {
-            const coursesData = snapshot.docs.map(doc => ({
+            const toolsData = snapshot.docs.map(doc => ({
                 ...doc.data(),
                 id: doc.id
             }));
-            setCourses(coursesData);
+            setTools(toolsData);
         });
 
         return () => unsubscribe();
     }, []);
 
     const handleMigrate = async () => {
-        const localData = JSON.parse(localStorage.getItem('jarnnong_courses') || '[]');
+        const localData = JSON.parse(localStorage.getItem('jarnnong_aitools') || '[]');
         if (localData.length === 0) return alert('ไม่พบข้อมูลเก่าในเครื่อง');
 
         if (!window.confirm(`ต้องการย้ายข้อมูล ${localData.length} รายการ ขึ้น Cloud หรือไม่?`)) return;
@@ -55,14 +53,14 @@ export default function ManageCourses() {
         setIsMigrating(true);
         try {
             const batch = writeBatch(db);
-            localData.forEach(course => {
-                const newDocRef = doc(collection(db, 'courses'));
-                const { id, ...data } = course; // Remove local numeric ID
+            localData.forEach(tool => {
+                const newDocRef = doc(collection(db, 'aitools'));
+                const { id, ...data } = tool;
                 batch.set(newDocRef, data);
             });
             await batch.commit();
             alert('ย้ายข้อมูลสำเร็จ!');
-            localStorage.removeItem('jarnnong_courses');
+            localStorage.removeItem('jarnnong_aitools');
         } catch (error) {
             console.error('Migration failed:', error);
             alert('เกิดข้อผิดพลาดในการย้ายข้อมูล');
@@ -71,18 +69,16 @@ export default function ManageCourses() {
         }
     };
 
-    const handleOpenModal = (course = null) => {
-        if (course) {
-            setEditingCourse(course);
-            setFormData({ ...course });
+    const handleOpenModal = (tool = null) => {
+        if (tool) {
+            setEditingTool(tool);
+            setFormData({ ...tool });
         } else {
-            setEditingCourse(null);
+            setEditingTool(null);
             setFormData({
                 title: '',
                 category: '',
                 description: '',
-                duration: '',
-                price: '',
                 link: '',
                 image: ''
             });
@@ -109,12 +105,12 @@ export default function ManageCourses() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            if (editingCourse) {
-                const courseDoc = doc(db, 'courses', editingCourse.id);
+            if (editingTool) {
+                const toolDoc = doc(db, 'aitools', editingTool.id);
                 const { id, ...data } = formData;
-                await updateDoc(courseDoc, data);
+                await updateDoc(toolDoc, data);
             } else {
-                await addDoc(collection(db, 'courses'), formData);
+                await addDoc(collection(db, 'aitools'), formData);
             }
             setIsModalOpen(false);
         } catch (error) {
@@ -124,9 +120,9 @@ export default function ManageCourses() {
     };
 
     const handleDelete = async (id) => {
-        if (window.confirm('ยืนยันการลบหลักสูตรนี้?')) {
+        if (window.confirm('ยืนยันการลบเครื่องมือนี้?')) {
             try {
-                await deleteDoc(doc(db, 'courses', id));
+                await deleteDoc(doc(db, 'aitools', id));
             } catch (error) {
                 console.error('Delete failed:', error);
                 alert('เกิดข้อผิดพลาดในการลบข้อมูล');
@@ -147,11 +143,11 @@ export default function ManageCourses() {
         <div className="p-4 md:p-8 space-y-6 animate-in fade-in duration-500">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
                 <div>
-                    <h1 className="text-3xl font-black text-white font-display uppercase tracking-tight">จัดการหลักสูตรอบรม</h1>
-                    <p className="text-sm text-slate-400">เพิ่ม แก้ไข หรือลบรายการหลักสูตรการสอนในระบบ (Firestore)</p>
+                    <h1 className="text-3xl font-black text-white font-display uppercase tracking-tight">จัดการเครื่องมือ AI</h1>
+                    <p className="text-sm text-slate-400">เพิ่ม แก้ไข หรือลบรายการเครื่องมือ AI ในระบบ (Firestore)</p>
                 </div>
                 <div className="flex gap-3">
-                    {localStorage.getItem('jarnnong_courses') && (
+                    {localStorage.getItem('jarnnong_aitools') && (
                         <button
                             onClick={handleMigrate}
                             disabled={isMigrating}
@@ -166,7 +162,7 @@ export default function ManageCourses() {
                         className="bg-[#0df2f2] text-[#050d0d] px-6 py-3 rounded-xl font-bold flex items-center gap-2 hover:shadow-[0_0_20px_rgba(13,242,242,0.4)] transition-all"
                     >
                         <span className="material-symbols-outlined text-xl">add</span>
-                        เพิ่มหลักสูตรใหม่
+                        เพิ่มเครื่องมือใหม่
                     </button>
                 </div>
             </div>
@@ -177,45 +173,37 @@ export default function ManageCourses() {
                         <thead>
                             <tr className="border-b border-white/5 bg-white/5 text-[10px] uppercase tracking-widest text-[#0df2f2] font-bold">
                                 <th className="px-6 py-4">รูปปก</th>
-                                <th className="px-6 py-4">ชื่อหลักสูตร / หมวดหมู่</th>
-                                <th className="px-6 py-4 text-center">ระยะเวลา</th>
-                                <th className="px-6 py-4 text-center">ราคา</th>
+                                <th className="px-6 py-4">ชื่อเครื่องมือ / หมวดหมู่</th>
                                 <th className="px-6 py-4 text-right">จัดการ</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-white/5">
-                            {courses.map((course) => (
-                                <tr key={course.id} className="hover:bg-white/[0.02] transition-colors group">
+                            {tools.map((tool) => (
+                                <tr key={tool.id} className="hover:bg-white/[0.02] transition-colors group">
                                     <td className="px-6 py-4">
                                         <div className="w-20 h-12 rounded-lg overflow-hidden bg-white/5 border border-white/10">
-                                            <img src={course.image} alt="" className="w-full h-full object-cover" />
+                                            <img src={tool.image} alt="" className="w-full h-full object-cover" />
                                         </div>
                                     </td>
                                     <td className="px-6 py-4">
                                         <div className="flex flex-col">
-                                            <span className="font-bold text-white text-sm">{course.title}</span>
-                                            <span className="text-[10px] text-slate-500 uppercase mt-1 tracking-wider">{course.category}</span>
+                                            <span className="font-bold text-white text-sm">{tool.title}</span>
+                                            <span className="text-[10px] text-slate-500 uppercase mt-1 tracking-wider">{tool.category}</span>
                                         </div>
                                     </td>
-                                    <td className="px-6 py-4 text-center">
-                                        <span className="text-xs text-slate-400 font-mono italic">{course.duration}</span>
-                                    </td>
-                                    <td className="px-6 py-4 text-center">
-                                        <span className="text-sm font-bold text-[#0df2f2]">{course.price} ฿</span>
-                                    </td>
                                     <td className="px-6 py-4 text-right space-x-2">
-                                        <button onClick={() => handleOpenModal(course)} className="p-2 text-slate-400 hover:text-white transition-colors">
+                                        <button onClick={() => handleOpenModal(tool)} className="p-2 text-slate-400 hover:text-white transition-colors">
                                             <span className="material-symbols-outlined text-xl">edit</span>
                                         </button>
-                                        <button onClick={() => handleDelete(course.id)} className="p-2 text-slate-400 hover:text-red-400 transition-colors">
+                                        <button onClick={() => handleDelete(tool.id)} className="p-2 text-slate-400 hover:text-red-400 transition-colors">
                                             <span className="material-symbols-outlined text-xl">delete</span>
                                         </button>
                                     </td>
                                 </tr>
                             ))}
-                            {courses.length === 0 && (
+                            {tools.length === 0 && (
                                 <tr>
-                                    <td colSpan="5" className="px-6 py-12 text-center text-slate-500 italic">ไม่พบข้อมูลหลักสูตร</td>
+                                    <td colSpan="3" className="px-6 py-12 text-center text-slate-500 italic">ไม่พบข้อมูลเครื่องมือ AI</td>
                                 </tr>
                             )}
                         </tbody>
@@ -223,13 +211,13 @@ export default function ManageCourses() {
                 </div>
             </div>
 
-            {/* Modal Course Add/Edit */}
+            {/* Modal Tool Add/Edit */}
             {isModalOpen && (
                 <div className="fixed inset-0 z-50 flex items-start justify-center p-4 bg-black/80 backdrop-blur-sm overflow-y-auto pt-10 pb-10">
                     <div className="bg-[#0a1a1a] border border-[#0df2f2]/20 w-full max-w-2xl rounded-3xl p-8 shadow-2xl animate-in zoom-in-95 duration-200">
                         <div className="flex justify-between items-center mb-6">
                             <h2 className="text-2xl font-black text-white font-display">
-                                {editingCourse ? 'แก้ไขหลักสูตรอบรม' : 'เพิ่มหลักสูตรใหม่'}
+                                {editingTool ? 'แก้ไขเครื่องมือ AI' : 'เพิ่มเครื่องมือใหม่'}
                             </h2>
                             <button onClick={() => setIsModalOpen(false)} className="text-slate-400 hover:text-white">
                                 <span className="material-symbols-outlined text-3xl">close</span>
@@ -239,11 +227,11 @@ export default function ManageCourses() {
                         <form onSubmit={handleSubmit} className="space-y-5">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                                 <div className="md:col-span-2">
-                                    <label className="block text-xs font-bold text-slate-400 mb-2 uppercase tracking-wider">ชื่อหลักสูตร</label>
+                                    <label className="block text-xs font-bold text-slate-400 mb-2 uppercase tracking-wider">ชื่อเครื่องมือ</label>
                                     <input
                                         type="text"
                                         required
-                                        placeholder="เช่น Mastery of Generative AI"
+                                        placeholder="เช่น ChatGPT, Midjourney"
                                         value={formData.title}
                                         onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                                         className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#0df2f2]/50 text-sm"
@@ -254,14 +242,14 @@ export default function ManageCourses() {
                                     <input
                                         type="text"
                                         required
-                                        placeholder="เช่น AI Tutorials, Business"
+                                        placeholder="เช่น Text, Image, Video"
                                         value={formData.category}
                                         onChange={(e) => setFormData({ ...formData, category: e.target.value })}
                                         className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#0df2f2]/50 text-sm"
                                     />
                                 </div>
                                 <div>
-                                    <label className="block text-xs font-bold text-slate-400 mb-2 uppercase tracking-wider">ลิงก์สมัครเรียน (URL)</label>
+                                    <label className="block text-xs font-bold text-slate-400 mb-2 uppercase tracking-wider">ลิงก์ใช้งาน (URL)</label>
                                     <input
                                         type="url"
                                         required
@@ -271,30 +259,10 @@ export default function ManageCourses() {
                                         className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#0df2f2]/50 text-sm font-mono"
                                     />
                                 </div>
-                                <div>
-                                    <label className="block text-xs font-bold text-slate-400 mb-2 uppercase tracking-wider">ระยะเวลา</label>
-                                    <input
-                                        type="text"
-                                        placeholder="เช่น 12 ชั่วโมง"
-                                        value={formData.duration}
-                                        onChange={(e) => setFormData({ ...formData, duration: e.target.value })}
-                                        className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#0df2f2]/50 text-sm"
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-xs font-bold text-slate-400 mb-2 uppercase tracking-wider">ราคา (บาท)</label>
-                                    <input
-                                        type="text"
-                                        placeholder="เช่น 3,500"
-                                        value={formData.price}
-                                        onChange={(e) => setFormData({ ...formData, price: e.target.value })}
-                                        className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#0df2f2]/50 text-sm"
-                                    />
-                                </div>
                             </div>
 
                             <div>
-                                <label className="block text-xs font-bold text-slate-400 mb-2 uppercase tracking-wider">อัปโหลดรูปภาพหน้าปก</label>
+                                <label className="block text-xs font-bold text-slate-400 mb-2 uppercase tracking-wider">อัปโหลดรูปภาพ</label>
                                 <div className="flex items-center gap-4">
                                     <label className="flex-1 flex items-center justify-center gap-2 px-4 py-8 border-2 border-dashed border-white/10 rounded-2xl hover:border-[#0df2f2]/50 transition-colors cursor-pointer group">
                                         <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
@@ -310,7 +278,7 @@ export default function ManageCourses() {
                             </div>
 
                             <div className="quill-container">
-                                <label className="block text-xs font-bold text-slate-400 mb-4 uppercase tracking-wider">รายละเอียดหลักสูตร (Rich Text)</label>
+                                <label className="block text-xs font-bold text-slate-400 mb-4 uppercase tracking-wider">คำอธิบาย (Rich Text)</label>
                                 <ReactQuill
                                     ref={quillRef}
                                     theme="snow"
@@ -321,22 +289,12 @@ export default function ManageCourses() {
                                 />
                             </div>
 
-                            <style>{`
-                                .ql-toolbar.ql-snow { border-color: rgba(255,255,255,0.1) !important; background: rgba(255,255,255,0.05); border-radius: 12px 12px 0 0; }
-                                .ql-container.ql-snow { border-color: rgba(255,255,255,0.1) !important; border-radius: 0 0 12px 12px; height: 200px; font-size: 14px; }
-                                .ql-editor { color: #f1f5f9; }
-                                .ql-snow .ql-stroke { stroke: #94a3b8; }
-                                .ql-snow .ql-fill { fill: #94a3b8; }
-                                .ql-snow.ql-toolbar button:hover .ql-stroke { stroke: #0df2f2; }
-                                .ql-snow.ql-toolbar button.ql-active .ql-stroke { stroke: #0df2f2; }
-                            `}</style>
-
                             <div className="flex gap-4 pt-4">
                                 <button
                                     type="submit"
                                     className="flex-1 bg-[#0df2f2] text-[#050d0d] font-black py-4 rounded-xl hover:scale-[1.02] transition-all"
                                 >
-                                    บันทึกหลักสูตร
+                                    บันทึกเครื่องมือ
                                 </button>
                                 <button
                                     type="button"

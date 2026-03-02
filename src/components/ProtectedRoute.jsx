@@ -1,13 +1,20 @@
-import { Navigate, useLocation } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import { Navigate } from 'react-router-dom';
+import { useAuthState } from 'react-firebase-hooks/auth';
+import { auth } from '../firebase';
 
 export default function ProtectedRoute({ children }) {
-    const { isAuthenticated } = useAuth();
-    const location = useLocation();
+    const [user, loading] = useAuthState(auth);
 
-    if (!isAuthenticated) {
-        // Redirect to login but save the current location to redirect back after login
-        return <Navigate to="/admin/login" state={{ from: location }} replace />;
+    if (loading) {
+        return (
+            <div className="min-h-screen bg-[#050d0d] flex items-center justify-center">
+                <div className="w-10 h-10 border-4 border-[#0df2f2]/20 border-t-[#0df2f2] rounded-full animate-spin"></div>
+            </div>
+        );
+    }
+
+    if (!user) {
+        return <Navigate to="/admin/login" replace />;
     }
 
     return children;

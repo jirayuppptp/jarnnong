@@ -2,6 +2,18 @@ import { useState, useEffect, useRef, useMemo } from 'react';
 import ReactQuill from 'react-quill-new';
 import 'react-quill-new/dist/quill.snow.css';
 import { compressImage } from '../../utils/imageHelper';
+import { db } from '../../firebase';
+import {
+    collection,
+    addDoc,
+    updateDoc,
+    deleteDoc,
+    doc,
+    onSnapshot,
+    query,
+    orderBy,
+    writeBatch
+} from 'firebase/firestore';
 
 function ManageNews() {
     const quillRef = useRef(null);
@@ -9,6 +21,8 @@ function ManageNews() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingNews, setEditingNews] = useState(null);
     const [loadingImage, setLoadingImage] = useState(false);
+    const [isMigrating, setIsMigrating] = useState(false);
+
     const [formData, setFormData] = useState({
         title: '',
         date: new Date().toISOString().split('T')[0],
@@ -18,29 +32,41 @@ function ManageNews() {
     });
 
     useEffect(() => {
-        const savedNews = localStorage.getItem('jarnnong_news');
-        if (savedNews) {
-            setNews(JSON.parse(savedNews));
-        } else {
-            const mock = [
-                {
-                    id: 1,
-                    title: 'OpenAI เปิดตัว Sora โมเดลสร้างวิดีโอจากข้อความสุดสมจริง',
-                    content: 'วงการวิดีโอต้องสั่นสะเทือนเมื่อ OpenAI เปิดตัวโมเดลใหม่ล่าสุดที่สามารถสร้างวิดีโอคุณภาพสูงได้จากเพียงคำบรรยายข้อความ...',
-                    date: '2024-03-01',
-                    category: 'AI Updates',
-                    image: 'https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&q=80&w=800'
-                }
-            ];
-            setNews(mock);
-            localStorage.setItem('jarnnong_news', JSON.stringify(mock));
-        }
+        const q = query(collection(db, 'news'), orderBy('date', 'desc'));
+        const unsubscribe = onSnapshot(q, (snapshot) => {
+            const newsData = snapshot.docs.map(doc => ({
+                ...doc.data(),
+                id: doc.id
+            }));
+            setNews(newsData);
+        });
+
+        return () => unsubscribe();
     }, []);
 
-    const saveToLocalStorage = (data) => {
-        localStorage.setItem('jarnnong_news', JSON.stringify(data));
-        setNews(data);
-        setIsModalOpen(false);
+    const handleMigrate = async () => {
+        const localData = JSON.parse(localStorage.getItem('jarnnong_news') || '[]');
+        if (localData.length === 0) return alert('ไม่พบข้อมูลข่าวเก่าในเครื่อง');
+
+        if (!window.confirm(`ต้องการย้ายข่าวสาร ${localData.length} รายการ ขึ้น Cloud หรือไม่?`)) return;
+
+        setIsMigrating(true);
+        try {
+            const batch = writeBatch(db);
+            localData.forEach(item => {
+                const newDocRef = doc(collection(db, 'news'));
+                const { id, ...data } = item;
+                batch.set(newDocRef, data);
+            });
+            await batch.commit();
+            alert('ย้ายข่าวสารสำเร็จ!');
+            localStorage.removeItem('jarnnong_news');
+        } catch (error) {
+            console.error('Migration failed:', error);
+            alert('เกิดข้อผิดพลาดในการย้ายข้อมูล');
+        } finally {
+            setIsMigrating(false);
+        }
     };
 
     const handleOpenModal = (item = null) => {
@@ -60,7 +86,7 @@ function ManageNews() {
 
         setLoadingImage(true);
         try {
-            const compressed = await compressImage(file, 1200, 0.6); // Compress to 60% quality
+            const compressed = await compressImage(file, 1200, 0.6);
             setFormData({ ...formData, image: compressed });
         } catch (error) {
             console.error('Image upload failed:', error);
@@ -70,26 +96,36 @@ function ManageNews() {
         }
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        if (editingNews) {
-            const updated = news.map(n => n.id === editingNews.id ? { ...formData, id: n.id } : n);
-            saveToLocalStorage(updated);
-        } else {
-            const newItem = {
-                ...formData,
-                id: Date.now(),
-                initialViews: Math.floor(Math.random() * (2500 - 800 + 1)) + 800,
-                realViews: 0
-            };
-            saveToLocalStorage([...news, newItem]);
+        try {
+            if (editingNews) {
+                const newsDoc = doc(db, 'news', editingNews.id);
+                const { id, ...data } = formData;
+                await updateDoc(newsDoc, data);
+            } else {
+                const newItem = {
+                    ...formData,
+                    initialViews: Math.floor(Math.random() * (2500 - 800 + 1)) + 800,
+                    realViews: 0
+                };
+                await addDoc(collection(db, 'news'), newItem);
+            }
+            setIsModalOpen(false);
+        } catch (error) {
+            console.error('Save failed:', error);
+            alert('เกิดข้อผิดพลาดในการบันทึกข้อมูล');
         }
     };
 
-    const handleDelete = (id) => {
+    const handleDelete = async (id) => {
         if (window.confirm('คุณแน่ใจหรือไม่ที่จะลบข่าวนี้?')) {
-            const filtered = news.filter(n => n.id !== id);
-            saveToLocalStorage(filtered);
+            try {
+                await deleteDoc(doc(db, 'news', id));
+            } catch (error) {
+                console.error('Delete failed:', error);
+                alert('เกิดข้อผิดพลาดในการลบข้อมูล');
+            }
         }
     };
 
@@ -112,7 +148,7 @@ function ManageNews() {
                         const file = input.files[0];
                         if (file) {
                             try {
-                                const compressed = await compressImage(file, 800, 0.6); // Slightly smaller for inline images
+                                const compressed = await compressImage(file, 800, 0.6);
                                 const quill = quillRef.current.getEditor();
                                 const range = quill.getSelection();
                                 quill.insertEmbed(range.index, 'image', compressed);
@@ -132,15 +168,27 @@ function ManageNews() {
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
                 <div>
                     <h1 className="text-3xl font-black text-white mb-2 font-display">Manage AI News</h1>
-                    <p className="text-slate-400">สร้างและแก้ไขข่าวสารวงการ AI</p>
+                    <p className="text-slate-400">สร้างและแก้ไขข่าวสารวงการ AI (Firestore)</p>
                 </div>
-                <button
-                    onClick={() => handleOpenModal()}
-                    className="bg-[#0df2f2] text-[#050d0d] px-6 py-3 rounded-xl font-bold flex items-center gap-2 hover:scale-105 transition-transform"
-                >
-                    <span className="material-symbols-outlined">add</span>
-                    เพิ่มข่าวใหม่
-                </button>
+                <div className="flex gap-3">
+                    {localStorage.getItem('jarnnong_news') && (
+                        <button
+                            onClick={handleMigrate}
+                            disabled={isMigrating}
+                            className="bg-purple-600/20 text-purple-400 border border-purple-500/30 px-4 py-3 rounded-xl font-bold flex items-center gap-2 hover:bg-purple-600/30 transition-all disabled:opacity-50"
+                        >
+                            <span className="material-symbols-outlined text-xl">cloud_upload</span>
+                            {isMigrating ? 'กำลังย้าย...' : 'ย้ายข่าวสารขึ้น Cloud'}
+                        </button>
+                    )}
+                    <button
+                        onClick={() => handleOpenModal()}
+                        className="bg-[#0df2f2] text-[#050d0d] px-6 py-3 rounded-xl font-bold flex items-center gap-2 hover:scale-105 transition-transform"
+                    >
+                        <span className="material-symbols-outlined">add</span>
+                        เพิ่มข่าวใหม่
+                    </button>
+                </div>
             </div>
 
             <div className="glass-card overflow-hidden">
@@ -195,6 +243,11 @@ function ManageNews() {
                                     </td>
                                 </tr>
                             ))}
+                            {news.length === 0 && (
+                                <tr>
+                                    <td colSpan="7" className="px-6 py-12 text-center text-slate-500 italic">ไม่พบข้อมูลข่าวสาร</td>
+                                </tr>
+                            )}
                         </tbody>
                     </table>
                 </div>

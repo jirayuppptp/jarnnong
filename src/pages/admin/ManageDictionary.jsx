@@ -1,31 +1,64 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
 import ReactQuill from 'react-quill-new';
 import 'react-quill-new/dist/quill.snow.css';
+import { db } from '../../firebase';
+import {
+    collection,
+    addDoc,
+    updateDoc,
+    deleteDoc,
+    doc,
+    onSnapshot,
+    query,
+    orderBy,
+    writeBatch
+} from 'firebase/firestore';
 
 export default function ManageDictionary() {
     const quillRef = useRef(null);
     const [items, setItems] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingItem, setEditingItem] = useState(null);
+    const [isMigrating, setIsMigrating] = useState(false);
+
     const [formData, setFormData] = useState({ term: '', category: 'General AI', definition: '' });
 
     useEffect(() => {
-        const savedDict = localStorage.getItem('jarnnong_dict');
-        if (savedDict) {
-            setItems(JSON.parse(savedDict));
-        } else {
-            const mock = [
-                { id: 1, term: 'LLM', category: 'Model Architecture', definition: 'Large Language Model หรือโมเดลภาษาขนาดใหญ่ที่ถูกฝึกฝนด้วยข้อมูลมหาศาล' },
-                { id: 2, term: 'Prompt Engineering', category: 'Usage', definition: 'ศาสตร์ของการออกแบบคำสั่งเพื่อให้ AI แสดงผลลัพธ์ที่ตรงใจที่สุด' },
-            ];
-            setItems(mock);
-            localStorage.setItem('jarnnong_dict', JSON.stringify(mock));
-        }
+        const q = query(collection(db, 'dictionary'), orderBy('term', 'asc'));
+        const unsubscribe = onSnapshot(q, (snapshot) => {
+            const dictionaryData = snapshot.docs.map(doc => ({
+                ...doc.data(),
+                id: doc.id
+            }));
+            setItems(dictionaryData);
+        });
+
+        return () => unsubscribe();
     }, []);
 
-    const saveToLocalStorage = (newItems) => {
-        setItems(newItems);
-        localStorage.setItem('jarnnong_dict', JSON.stringify(newItems));
+    const handleMigrate = async () => {
+        const localData = JSON.parse(localStorage.getItem('jarnnong_dict') || '[]');
+        if (localData.length === 0) return alert('ไม่พบข้อมูลคำศัพท์เก่าในเครื่อง');
+
+        if (!window.confirm(`ต้องการย้ายคำศัพท์ ${localData.length} รายการ ขึ้น Cloud หรือไม่?`)) return;
+
+        setIsMigrating(true);
+        try {
+            const batch = writeBatch(db);
+            localData.forEach(item => {
+                const newDocRef = doc(collection(db, 'dictionary'));
+                const { id, ...data } = item;
+                batch.set(newDocRef, data);
+            });
+            await batch.commit();
+            alert('ย้ายคำศัพท์สำเร็จ!');
+            localStorage.removeItem('jarnnong_dict');
+        } catch (error) {
+            console.error('Migration failed:', error);
+            alert('เกิดข้อผิดพลาดในการย้ายข้อมูล');
+        } finally {
+            setIsMigrating(false);
+        }
     };
 
     const handleOpenModal = (item = null) => {
@@ -39,22 +72,31 @@ export default function ManageDictionary() {
         setIsModalOpen(true);
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        if (editingItem) {
-            const updated = items.map(i => i.id === editingItem.id ? { ...formData, id: i.id } : i);
-            saveToLocalStorage(updated);
-        } else {
-            const newItem = { ...formData, id: Date.now() };
-            saveToLocalStorage([...items, newItem]);
+        try {
+            if (editingItem) {
+                const docRef = doc(db, 'dictionary', editingItem.id);
+                const { id, ...data } = formData;
+                await updateDoc(docRef, data);
+            } else {
+                await addDoc(collection(db, 'dictionary'), formData);
+            }
+            setIsModalOpen(false);
+        } catch (error) {
+            console.error('Save failed:', error);
+            alert('เกิดข้อผิดพลาดในการบันทึกข้อมูล');
         }
-        setIsModalOpen(false);
     };
 
-    const handleDelete = (id) => {
+    const handleDelete = async (id) => {
         if (window.confirm('ยืนยันการลบคำศัพท์นี้?')) {
-            const filtered = items.filter(i => i.id !== id);
-            saveToLocalStorage(filtered);
+            try {
+                await deleteDoc(doc(db, 'dictionary', id));
+            } catch (error) {
+                console.error('Delete failed:', error);
+                alert('เกิดข้อผิดพลาดในการลบข้อมูล');
+            }
         }
     };
 
@@ -72,15 +114,27 @@ export default function ManageDictionary() {
             <div className="flex justify-between items-center">
                 <div>
                     <h1 className="text-2xl font-black text-white font-display uppercase tracking-wider">Manage AI Glossary</h1>
-                    <p className="text-sm text-slate-400">รวบรวมและแปลความหมายคำศัพท์เทคนิคล้ำสมัย</p>
+                    <p className="text-sm text-slate-400">รวบรวมและแปลความหมายคำศัพท์เทคนิคล้ำสมัย (Firestore)</p>
                 </div>
-                <button
-                    onClick={() => handleOpenModal()}
-                    className="bg-[#0df2f2] text-[#050d0d] px-6 py-3 rounded-xl font-bold flex items-center gap-2 hover:shadow-[0_0_20px_rgba(13,242,242,0.4)] hover:scale-105 transition-all"
-                >
-                    <span className="material-symbols-outlined text-xl">add</span>
-                    เพิ่มคำศัพท์ใหม่
-                </button>
+                <div className="flex gap-3">
+                    {localStorage.getItem('jarnnong_dict') && (
+                        <button
+                            onClick={handleMigrate}
+                            disabled={isMigrating}
+                            className="bg-purple-600/20 text-purple-400 border border-purple-500/30 px-4 py-3 rounded-xl font-bold flex items-center gap-2 hover:bg-purple-600/30 transition-all disabled:opacity-50"
+                        >
+                            <span className="material-symbols-outlined text-xl">cloud_upload</span>
+                            {isMigrating ? 'กำลังย้าย...' : 'ย้ายคำศัพท์ขึ้น Cloud'}
+                        </button>
+                    )}
+                    <button
+                        onClick={() => handleOpenModal()}
+                        className="bg-[#0df2f2] text-[#050d0d] px-6 py-3 rounded-xl font-bold flex items-center gap-2 hover:shadow-[0_0_20px_rgba(13,242,242,0.4)] hover:scale-105 transition-all"
+                    >
+                        <span className="material-symbols-outlined text-xl">add</span>
+                        เพิ่มคำศัพท์ใหม่
+                    </button>
+                </div>
             </div>
 
             <div className="glass-card overflow-hidden">
@@ -115,6 +169,11 @@ export default function ManageDictionary() {
                                 </td>
                             </tr>
                         ))}
+                        {items.length === 0 && (
+                            <tr>
+                                <td colSpan="4" className="px-6 py-12 text-center text-slate-500 italic">ไม่พบข้อมูลคำศัพท์</td>
+                            </tr>
+                        )}
                     </tbody>
                 </table>
             </div>

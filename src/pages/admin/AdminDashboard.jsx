@@ -1,55 +1,78 @@
 import { useState, useEffect } from 'react';
+import { db } from '../../firebase';
+import { collection, onSnapshot, query, orderBy, limit } from 'firebase/firestore';
 
 export default function AdminDashboard() {
     const [counts, setCounts] = useState({
         courses: 0,
         news: 0,
         dictionary: 0,
+        aitools: 0,
         totalViews: 0
     });
     const [recentActivities, setRecentActivities] = useState([]);
+    const [dbStatus, setDbStatus] = useState('connecting');
 
     useEffect(() => {
-        // Fetch data from localStorage
-        const courses = JSON.parse(localStorage.getItem('jarnnong_courses') || '[]');
-        const news = JSON.parse(localStorage.getItem('jarnnong_news') || '[]');
-        const dictionary = JSON.parse(localStorage.getItem('jarnnong_dictionary') || '[]');
-
-        // Calculate total views (initial + real)
-        const totalViews = news.reduce((acc, curr) => acc + (curr.initialViews || 0) + (curr.realViews || 0), 0);
-
-        setCounts({
-            courses: courses.length,
-            news: news.length,
-            dictionary: dictionary.length,
-            totalViews: totalViews
+        // Listen to Courses
+        const unsubscribeCourses = onSnapshot(collection(db, 'courses'), (snapshot) => {
+            setCounts(prev => ({ ...prev, courses: snapshot.size }));
+            setDbStatus('online');
         });
 
-        // Generate dynamic recent activities
-        const combined = [
-            ...courses.map(c => ({ type: 'หลักสูตร', title: c.title, time: 'เมื่อเร็วๆ นี้' })),
-            ...news.map(n => ({ type: 'ข่าวสาร', title: n.title, time: 'เมื่อเร็วๆ นี้' })),
-            ...dictionary.map(d => ({ type: 'พจนานุกรม', title: d.term, time: 'เมื่อเร็วๆ นี้' }))
-        ].sort(() => 0.5 - Math.random()); // Simple shuffle for varied activity
+        // Listen to Dictionary
+        const unsubscribeDict = onSnapshot(collection(db, 'dictionary'), (snapshot) => {
+            setCounts(prev => ({ ...prev, dictionary: snapshot.size }));
+        });
 
-        setRecentActivities(combined.slice(0, 5));
+        // Listen to AI Tools
+        const unsubscribeAITools = onSnapshot(collection(db, 'aitools'), (snapshot) => {
+            setCounts(prev => ({ ...prev, aitools: snapshot.size }));
+        });
+
+        // Listen to News for counts and views
+        const unsubscribeNews = onSnapshot(collection(db, 'news'), (snapshot) => {
+            const newsData = snapshot.docs.map(doc => doc.data());
+            const views = newsData.reduce((acc, curr) => acc + (curr.initialViews || 0) + (curr.realViews || 0), 0);
+            setCounts(prev => ({ ...prev, news: snapshot.size, totalViews: views }));
+
+            // Generate some "recent activity" from news as it's the most active
+            const recent = snapshot.docs
+                .map(doc => ({
+                    id: doc.id,
+                    type: 'ข่าวสาร',
+                    title: doc.data().title,
+                    time: doc.data().date
+                }))
+                .sort((a, b) => b.time.localeCompare(a.time))
+                .slice(0, 5);
+            setRecentActivities(recent);
+        });
+
+        return () => {
+            unsubscribeCourses();
+            unsubscribeDict();
+            unsubscribeAITools();
+            unsubscribeNews();
+        };
     }, []);
 
     const stats = [
-        { label: 'หลักสูตรอบรมทั้งหมด', value: counts.courses.toLocaleString(), icon: 'school', color: 'bg-blue-500/20 text-blue-400' },
+        { label: 'หลักสูตรอบรม', value: counts.courses.toLocaleString(), icon: 'school', color: 'bg-blue-500/20 text-blue-400' },
+        { label: 'เครื่องมือ AI', value: counts.aitools.toLocaleString(), icon: 'precision_manufacturing', color: 'bg-cyan-500/20 text-cyan-400' },
         { label: 'ข่าวสาร AI', value: counts.news.toLocaleString(), icon: 'newspaper', color: 'bg-emerald-500/20 text-emerald-400' },
-        { label: 'คำศัพท์ในสารบัญ', value: counts.dictionary.toLocaleString(), icon: 'menu_book', color: 'bg-purple-500/20 text-purple-400' },
-        { label: 'การเข้าชมทั้งหมด', value: counts.totalViews >= 1000 ? (counts.totalViews / 1000).toFixed(1) + 'k' : counts.totalViews, icon: 'trending_up', color: 'bg-orange-500/20 text-orange-400' },
+        { label: 'คำศัพท์ AI', value: counts.dictionary.toLocaleString(), icon: 'menu_book', color: 'bg-purple-500/20 text-purple-400' },
+        { label: 'ยอดการเข้าชม', value: counts.totalViews >= 1000 ? (counts.totalViews / 1000).toFixed(1) + 'k' : counts.totalViews, icon: 'trending_up', color: 'bg-orange-500/20 text-orange-400' },
     ];
 
     return (
         <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
             <div>
                 <h1 className="text-3xl font-black text-white">Dashboard สรุปภาพรวม</h1>
-                <p className="text-slate-400 mt-2">ยินดีต้อนรับกลับมา, นี่คือข้อมูลล่าสุดของ JarnNong.com</p>
+                <p className="text-slate-400 mt-2">ยินดีต้อนรับกลับมา, ข้อมูลทั้งหมดดึงจาก <span className="text-[#0df2f2] font-bold">Cloud Firestore</span></p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6">
                 {stats.map((s) => (
                     <div key={s.label} className="bg-[#0a1a1a]/80 border border-white/5 p-6 rounded-2xl backdrop-blur-sm group hover:border-[#0df2f2]/20 transition-all">
                         <div className="flex justify-between items-start mb-4">
@@ -69,7 +92,7 @@ export default function AdminDashboard() {
                 <div className="bg-[#0a1a1a]/80 border border-white/5 p-6 rounded-3xl">
                     <h3 className="text-lg font-bold text-white mb-6 flex items-center gap-2">
                         <span className="material-symbols-outlined text-[#0df2f2]">history</span>
-                        กิจกรรมล่าสุด
+                        ข่าวสารล่าสุด
                     </h3>
                     <div className="space-y-4">
                         {recentActivities.length > 0 ? (
@@ -83,7 +106,7 @@ export default function AdminDashboard() {
                                 </div>
                             ))
                         ) : (
-                            <p className="text-slate-500 italic text-sm text-center py-8">ยังไม่มีกิจกรรมล่าสุด</p>
+                            <p className="text-slate-500 italic text-sm text-center py-8">ยังไม่มีกิจกรรมล่าสุดในส่วนข่าวสาร</p>
                         )}
                     </div>
                 </div>
@@ -92,30 +115,27 @@ export default function AdminDashboard() {
                 <div className="bg-[#0a1a1a]/80 border border-white/5 p-6 rounded-3xl">
                     <h3 className="text-lg font-bold text-white mb-6 flex items-center gap-2">
                         <span className="material-symbols-outlined text-[#0df2f2]">settings_heart</span>
-                        สถานะระบบ
+                        สถานะระบบคลาวด์
                     </h3>
                     <div className="space-y-4">
                         <div className="p-4 rounded-xl bg-white/[0.02] border border-white/5 space-y-4">
                             <div className="flex justify-between items-center text-sm">
-                                <span className="text-slate-400">Database Connection</span>
-                                <span className="text-emerald-400 font-bold flex items-center gap-2">
-                                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                                    ปกติ (OK)
+                                <span className="text-slate-400">Firestore Connection</span>
+                                <span className={`${dbStatus === 'online' ? 'text-emerald-400' : 'text-orange-400'} font-bold flex items-center gap-2`}>
+                                    <span className={`w-2 h-2 rounded-full ${dbStatus === 'online' ? 'bg-emerald-400 animate-pulse' : 'bg-orange-400 animate-pulse'}`}></span>
+                                    {dbStatus === 'online' ? 'เชื่อมต่อแล้ว (Online)' : 'กำลังเชื่อมต่อ...'}
                                 </span>
                             </div>
                             <div className="flex justify-between items-center text-sm">
-                                <span className="text-slate-400">Storage Usage (Local)</span>
+                                <span className="text-slate-400">Cloud Sync Status</span>
                                 <div className="flex items-center gap-3">
-                                    <div className="w-24 h-1.5 bg-white/5 rounded-full overflow-hidden">
-                                        <div className="h-full bg-blue-500 rounded-full" style={{ width: '8%' }}></div>
-                                    </div>
-                                    <span className="text-blue-400 font-bold">8%</span>
+                                    <span className="text-[#0df2f2] font-bold">Real-time</span>
                                 </div>
                             </div>
                             <div className="flex justify-between items-center text-sm">
-                                <span className="text-slate-400">Security Layers</span>
+                                <span className="text-slate-400">Environment</span>
                                 <span className="text-[#0df2f2] font-black tracking-tighter uppercase px-2 py-0.5 rounded bg-[#0df2f2]/10 text-[10px]">
-                                    Active / Protected
+                                    Production / Firebase
                                 </span>
                             </div>
                         </div>

@@ -1,24 +1,26 @@
 import { useState, useEffect } from 'react'
+import { db } from '../firebase'
+import { collection, onSnapshot, query, orderBy } from 'firebase/firestore'
 
 export default function AIDictionary() {
     const [terms, setTerms] = useState([])
     const [search, setSearch] = useState('')
+    const [loading, setLoading] = useState(true)
+    const [expandedId, setExpandedId] = useState(null)
 
     useEffect(() => {
-        const savedTerms = localStorage.getItem('jarnnong_dict')
-        if (savedTerms) {
-            setTerms(JSON.parse(savedTerms))
-        } else {
-            // Data will be updated from Admin
-            setTerms([])
-        }
+        const q = query(collection(db, 'dictionary'), orderBy('term', 'asc'));
+        const unsubscribe = onSnapshot(q, (snapshot) => {
+            const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            setTerms(data);
+            setLoading(false);
+        });
+        return () => unsubscribe();
     }, [])
-
-    const [expandedId, setExpandedId] = useState(null)
 
     const filteredTerms = terms.filter(t =>
         t.term.toLowerCase().includes(search.toLowerCase()) ||
-        t.definition.toLowerCase().includes(search.toLowerCase())
+        (t.definition || '').toLowerCase().includes(search.toLowerCase())
     )
 
     const toggleExpand = (id) => {
@@ -60,7 +62,11 @@ export default function AIDictionary() {
 
             {/* Terms List */}
             <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 mt-16 space-y-4">
-                {filteredTerms.length > 0 ? (
+                {loading ? (
+                    <div className="space-y-4">
+                        {[1, 2, 3].map(i => <div key={i} className="h-20 bg-white/5 animate-pulse rounded-2xl border border-white/10"></div>)}
+                    </div>
+                ) : filteredTerms.length > 0 ? (
                     filteredTerms.map((item, index) => {
                         const isExpanded = expandedId === item.id
                         return (
@@ -91,7 +97,7 @@ export default function AIDictionary() {
                                     }`}>
                                     <div className="px-6 md:px-8 pb-8 pt-0 border-t border-white/5">
                                         <div
-                                            className="rich-text-content text-slate-300 text-lg leading-relaxed mt-6"
+                                            className="rich-text-content text-slate-300 text-lg leading-relaxed mt-6 ql-editor !p-0"
                                             dangerouslySetInnerHTML={{ __html: item.definition }}
                                         />
                                     </div>

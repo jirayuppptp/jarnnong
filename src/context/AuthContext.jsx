@@ -1,33 +1,24 @@
-import { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext } from 'react';
+import { useAuthState } from 'react-firebase-hooks/auth';
+import { auth } from '../firebase';
+import { signOut } from 'firebase/auth';
 
 const AuthContext = createContext(null);
 
-const ADMIN_CREDENTIALS = {
-    username: 'jirayuppptp@gmail.com',
-    password: '12345678',
-};
-
 export function AuthProvider({ children }) {
-    const [isAuthenticated, setIsAuthenticated] = useState(() => {
-        return localStorage.getItem('admin_auth') === 'true';
-    });
+    const [user, loading, error] = useAuthState(auth);
 
-    const login = (username, password) => {
-        if (username === ADMIN_CREDENTIALS.username && password === ADMIN_CREDENTIALS.password) {
-            localStorage.setItem('admin_auth', 'true');
-            setIsAuthenticated(true);
-            return { success: true };
+    const logout = async () => {
+        try {
+            await signOut(auth);
+            localStorage.removeItem('admin_auth'); // Cleanup if still used elsewhere
+        } catch (err) {
+            console.error('Logout failed:', err);
         }
-        return { success: false, error: 'ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง' };
-    };
-
-    const logout = () => {
-        localStorage.removeItem('admin_auth');
-        setIsAuthenticated(false);
     };
 
     return (
-        <AuthContext.Provider value={{ isAuthenticated, login, logout }}>
+        <AuthContext.Provider value={{ user, loading, error, logout, isAuthenticated: !!user }}>
             {children}
         </AuthContext.Provider>
     );

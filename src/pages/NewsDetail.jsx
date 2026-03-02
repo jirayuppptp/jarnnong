@@ -1,40 +1,61 @@
 import { useState, useEffect } from 'react'
 import { useParams, NavLink, useNavigate } from 'react-router-dom'
+import { db } from '../firebase'
+import { doc, getDoc, updateDoc, increment, collection, query, limit, getDocs, where } from 'firebase/firestore'
 
 export default function NewsDetail() {
     const { id } = useParams()
     const navigate = useNavigate()
     const [article, setArticle] = useState(null)
     const [relatedNews, setRelatedNews] = useState([])
+    const [loading, setLoading] = useState(true)
 
     useEffect(() => {
-        const savedNews = localStorage.getItem('jarnnong_news')
-        if (savedNews) {
-            const allNews = JSON.parse(savedNews)
-            const found = allNews.find(item => item.id.toString() === id)
-            if (found) {
-                setArticle(found)
-                // Get other news as related news
-                setRelatedNews(allNews.filter(item => item.id.toString() !== id).slice(0, 3))
+        const fetchArticle = async () => {
+            setLoading(true)
+            try {
+                const docRef = doc(db, 'news', id)
+                const docSnap = await getDoc(docRef)
 
-                // Increment realViews
-                const updatedNews = allNews.map(item => {
-                    if (item.id.toString() === id) {
-                        return { ...item, realViews: (item.realViews || 0) + 1 };
-                    }
-                    return item;
-                });
-                localStorage.setItem('jarnnong_news', JSON.stringify(updatedNews));
-            } else {
+                if (docSnap.exists()) {
+                    const data = { id: docSnap.id, ...docSnap.data() }
+                    setArticle(data)
+
+                    // Increment realViews in Firestore
+                    await updateDoc(docRef, {
+                        realViews: increment(1)
+                    })
+
+                    // Fetch related news (simple: just get 3 latest excluding current)
+                    const q = query(collection(db, 'news'), limit(4))
+                    const querySnapshot = await getDocs(q)
+                    const related = querySnapshot.docs
+                        .map(d => ({ id: d.id, ...d.data() }))
+                        .filter(item => item.id !== id)
+                        .slice(0, 3)
+                    setRelatedNews(related)
+                } else {
+                    navigate('/ai-news')
+                }
+            } catch (error) {
+                console.error('Error fetching article:', error)
                 navigate('/ai-news')
+            } finally {
+                setLoading(false)
             }
-        } else {
-            navigate('/ai-news')
         }
 
-        // Scroll to top when article changes
+        fetchArticle()
         window.scrollTo(0, 0)
     }, [id, navigate])
+
+    if (loading) {
+        return (
+            <div className="min-h-screen bg-[#05070A] pt-32 flex justify-center">
+                <div className="animate-pulse text-primary font-bold">LOADING ARTICLE...</div>
+            </div>
+        )
+    }
 
     if (!article) return null
 
@@ -95,8 +116,8 @@ export default function NewsDetail() {
                         {/* Article Content - Rendered as Rich Text */}
                         <div className="max-w-none">
                             <div
-                                className="rich-text-content text-slate-300 text-lg leading-relaxed mb-12"
-                                dangerouslySetInnerHTML={{ __html: article.content || article.summary || '' }}
+                                className="rich-text-content text-slate-300 text-lg leading-relaxed mb-12 ql-editor !p-0"
+                                dangerouslySetInnerHTML={{ __html: article.content || '' }}
                             />
                         </div>
 

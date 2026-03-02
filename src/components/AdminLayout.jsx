@@ -4,16 +4,17 @@ import { useAuth } from '../context/AuthContext';
 const menuItems = [
     { label: 'Dashboard', icon: 'dashboard', to: '/admin/dashboard' },
     { label: 'จัดการหลักสูตรอบรม', icon: 'school', to: '/admin/courses' },
+    { label: 'จัดการเครื่องมือ AI', icon: 'precision_manufacturing', to: '/admin/aitools' },
     { label: 'จัดการข่าวสาร AI', icon: 'newspaper', to: '/admin/news' },
     { label: 'จัดการพจนานุกรม AI', icon: 'menu_book', to: '/admin/dictionary' },
 ];
 
 export default function AdminLayout({ children }) {
-    const { logout } = useAuth();
+    const { user, logout } = useAuth();
     const navigate = useNavigate();
 
-    const handleLogout = () => {
-        logout();
+    const handleLogout = async () => {
+        await logout();
         navigate('/admin/login');
     };
 
@@ -64,7 +65,7 @@ export default function AdminLayout({ children }) {
                     <h2 className="text-sm font-semibold text-slate-400 uppercase tracking-widest">Control Panel</h2>
                     <div className="flex items-center gap-4">
                         <div className="text-right hidden sm:block">
-                            <p className="text-xs font-bold text-white">jirayuppptp@gmail.com</p>
+                            <p className="text-xs font-bold text-white">{user?.email || 'Admin User'}</p>
                             <p className="text-[10px] text-[#0df2f2] uppercase">Super Admin</p>
                         </div>
                         <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-[#0df2f2] to-cyan-600 flex items-center justify-center shadow-lg shadow-cyan-500/20">

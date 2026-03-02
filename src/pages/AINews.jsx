@@ -1,17 +1,20 @@
 import { useState, useEffect } from 'react'
 import { NavLink } from 'react-router-dom'
+import { db } from '../firebase'
+import { collection, onSnapshot, query, orderBy } from 'firebase/firestore'
 
 export default function AINews() {
     const [news, setNews] = useState([])
+    const [loading, setLoading] = useState(true)
 
     useEffect(() => {
-        const savedNews = localStorage.getItem('jarnnong_news')
-        if (savedNews) {
-            setNews(JSON.parse(savedNews))
-        } else {
-            // News will be updated from Admin
-            setNews([])
-        }
+        const q = query(collection(db, 'news'), orderBy('date', 'desc'));
+        const unsubscribe = onSnapshot(q, (snapshot) => {
+            const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            setNews(data);
+            setLoading(false);
+        });
+        return () => unsubscribe();
     }, [])
 
     return (
@@ -35,7 +38,11 @@ export default function AINews() {
 
             {/* News Grid */}
             <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-16">
-                {news.length > 0 ? (
+                {loading ? (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        {[1, 2, 3].map(i => <div key={i} className="h-96 rounded-3xl bg-white/5 animate-pulse border border-white/10"></div>)}
+                    </div>
+                ) : news.length > 0 ? (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                         {news.map((item, index) => (
                             <NavLink
@@ -67,7 +74,7 @@ export default function AINews() {
                                         {item.title}
                                     </h2>
                                     <p className="text-slate-400 text-sm leading-relaxed mb-8 line-clamp-3 font-light">
-                                        {(item.content || item.summary || '').replace(/<[^>]*>?/gm, '')}
+                                        {(item.content || '').replace(/<[^>]*>?/gm, '')}
                                     </p>
                                     <div className="flex items-center gap-2 text-primary font-bold text-xs uppercase tracking-widest group-hover:gap-3 transition-all">
                                         อ่านรายละเอียด
