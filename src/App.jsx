@@ -4,12 +4,12 @@ import Header from './components/Header'
 import Footer from './components/Footer'
 import Home from './pages/Home'
 import About from './pages/About'
-import AIHub from './pages/AIHub'
+import Courses from './pages/Courses'
 import AINews from './pages/AINews'
 import AIDictionary from './pages/AIDictionary'
 import AdminLogin from './pages/admin/AdminLogin'
 import AdminDashboard from './pages/admin/AdminDashboard'
-import ManageAITools from './pages/admin/ManageAITools'
+import ManageCourses from './pages/admin/ManageCourses'
 import ManageNews from './pages/admin/ManageNews'
 import ManageDictionary from './pages/admin/ManageDictionary'
 import NewsDetail from './pages/NewsDetail'
@@ -29,7 +29,7 @@ function AppContent() {
           {/* Public Routes */}
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />
-          <Route path="/ai-hub" element={<AIHub />} />
+          <Route path="/courses" element={<Courses />} />
           <Route path="/ai-news" element={<AINews />} />
           <Route path="/ai-news/:id" element={<NewsDetail />} />
           <Route path="/ai-terms" element={<AIDictionary />} />
@@ -43,7 +43,7 @@ function AppContent() {
                 <AdminLayout>
                   <Routes>
                     <Route path="dashboard" element={<AdminDashboard />} />
-                    <Route path="ai-tools" element={<ManageAITools />} />
+                    <Route path="courses" element={<ManageCourses />} />
                     <Route path="news" element={<ManageNews />} />
                     <Route path="dictionary" element={<ManageDictionary />} />
                     <Route path="*" element={<AdminDashboard />} />

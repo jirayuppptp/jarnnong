@@ -4,7 +4,7 @@ import { NavLink } from 'react-router-dom'
 const navItems = [
     { label: 'หน้าแรก', to: '/' },
     { label: 'จารย์โหน่ง', to: '/about' },
-    { label: 'สารบัญเครื่องมือ AI', to: '/ai-hub' },
+    { label: 'หลักสูตรอบรม', to: '/courses' },
     { label: 'ข่าวสาร AI', to: '/ai-news' },
     { label: 'พจนานุกรม AI', to: '/ai-terms' },
 ]
@@ -59,7 +59,7 @@ export default function Header() {
                             <span className="material-symbols-outlined text-primary/60 text-sm">search</span>
                             <input
                                 className="bg-transparent border-none focus:ring-0 text-sm w-48 text-white placeholder:text-text-secondary outline-none"
-                                placeholder="ค้นหาเครื่องมือ AI..."
+                                placeholder="ค้นหาหลักสูตร..."
                                 type="text"
                             />
                         </div>
