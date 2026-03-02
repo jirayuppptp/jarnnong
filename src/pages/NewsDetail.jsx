@@ -99,6 +99,7 @@ export default function NewsDetail() {
                             .rich-text-content ol { list-style-type: decimal; padding-left: 1.5rem; margin-bottom: 1.5rem; }
                             .rich-text-content blockquote { border-left: 4px solid var(--primary); padding-left: 1.5rem; font-style: italic; margin-bottom: 1.5rem; background: rgba(var(--primary-rgb), 0.1); padding: 1rem 1.5rem; border-radius: 0 12px 12px 0; }
                             .rich-text-content a { color: #0df2f2; text-decoration: underline; }
+                            .rich-text-content img { max-width: 100%; height: auto; border-radius: 20px; margin: 2.5rem auto; display: block; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 20px 40px rgba(0,0,0,0.3); }
                         `}</style>
 
                         {/* Share & Tags */}

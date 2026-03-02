@@ -88,12 +88,36 @@ function ManageNews() {
     };
 
     const quillModules = {
-        toolbar: [
-            [{ 'header': [1, 2, false] }],
-            ['bold', 'italic', 'underline', 'strike', 'blockquote'],
-            [{ 'list': 'ordered' }, { 'list': 'bullet' }],
-            ['link', 'clean']
-        ],
+        toolbar: {
+            container: [
+                [{ 'header': [1, 2, false] }],
+                ['bold', 'italic', 'underline', 'strike', 'blockquote'],
+                [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+                ['link', 'image', 'clean']
+            ],
+            handlers: {
+                image: () => {
+                    const input = document.createElement('input');
+                    input.setAttribute('type', 'file');
+                    input.setAttribute('accept', 'image/*');
+                    input.click();
+
+                    input.onchange = async () => {
+                        const file = input.files[0];
+                        if (file) {
+                            try {
+                                const compressed = await compressImage(file, 800, 0.6); // Slightly smaller for inline images
+                                const quill = document.querySelector('.ql-editor').__quill;
+                                const range = quill.getSelection();
+                                quill.insertEmbed(range.index, 'image', compressed);
+                            } catch (error) {
+                                console.error('Inline image upload failed:', error);
+                            }
+                        }
+                    };
+                }
+            }
+        },
     };
 
     return (
@@ -157,8 +181,8 @@ function ManageNews() {
             </div>
 
             {isModalOpen && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#050d0d]/95 backdrop-blur-sm overflow-y-auto">
-                    <div className="bg-[#0a1a1a] border border-white/10 w-full max-w-4xl rounded-3xl p-6 md:p-10 my-8">
+                <div className="fixed inset-0 z-50 flex items-start justify-center p-4 bg-[#050d0d]/95 backdrop-blur-sm overflow-y-auto pt-20 pb-20">
+                    <div className="bg-[#0a1a1a] border border-white/10 w-full max-w-4xl rounded-3xl p-6 md:p-10 shadow-2xl">
                         <div className="flex justify-between items-center mb-8">
                             <h2 className="text-2xl font-bold text-white font-display">
                                 {editingNews ? 'แก้ไขข่าวสาร' : 'เพิ่มข่าวใหม่'}
