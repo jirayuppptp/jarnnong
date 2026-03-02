@@ -55,19 +55,8 @@ export default function CourseDetail() {
         );
     }
 
-    // Default static curriculum if not provided in dynamic data
-    const defaultCurriculum = [
-        {
-            module: 'Module 1: Getting Started',
-            lessons: ['Introduction to course', 'Setup & Installation']
-        },
-        {
-            module: 'Module 2: Advanced Topics',
-            lessons: ['Deep dive into core concepts', 'Practical applications']
-        }
-    ];
-
-    const displayCurriculum = course.curriculum || defaultCurriculum;
+    // Use empty array if curriculum is not provided
+    const displayCurriculum = course.curriculum || [];
 
     return (
         <div className="min-h-screen bg-[#05070A] pb-32 font-sans">
@@ -81,7 +70,7 @@ export default function CourseDetail() {
                                 <span className="material-symbols-outlined text-sm">school</span>
                                 {course.category || 'PREMIUM COURSE'}
                             </div>
-                            <h1 className="text-4xl md:text-6xl lg:text-7xl font-black text-white mb-6 leading-tight">
+                            <h1 className="text-3xl md:text-5xl lg:text-6xl font-black text-white mb-6 leading-[1.2] font-display">
                                 {course.title}
                             </h1>
                             <p className="text-xl text-text-secondary mb-10 leading-relaxed font-light">
@@ -135,37 +124,50 @@ export default function CourseDetail() {
                                 <span className="material-symbols-outlined text-primary text-4xl">info</span>
                                 รายละเอียดหลักสูตร
                             </h2>
-                            <div className="text-slate-300 text-lg leading-relaxed whitespace-pre-wrap font-light glass-card p-10 border-white/5">
-                                {course.description}
-                            </div>
+                            <div
+                                className="quill-editor-content text-slate-300 text-lg leading-relaxed font-light glass-card p-10 border-white/5"
+                                dangerouslySetInnerHTML={{ __html: course.description }}
+                            />
+                            <style>{`
+                                .quill-editor-content h1, .quill-editor-content h2, .quill-editor-content h3 { color: white; font-weight: 800; margin-top: 1.5em; margin-bottom: 0.5em; font-family: 'Kanit', sans-serif; }
+                                .quill-editor-content h1 { font-size: 2rem; }
+                                .quill-editor-content h2 { font-size: 1.5rem; }
+                                .quill-editor-content p { margin-bottom: 1em; }
+                                .quill-editor-content ul { list-style-type: disc; padding-left: 2em; margin-bottom: 1em; }
+                                .quill-editor-content ol { list-style-type: decimal; padding-left: 2em; margin-bottom: 1em; }
+                                .quill-editor-content strong { color: white; font-weight: 700; }
+                                .quill-editor-content em { font-style: italic; color: #0df2f2; }
+                            `}</style>
                         </div>
 
-                        <div className="animate-fade-up animate-delay-200">
-                            <h2 className="text-3xl font-black text-white mb-8 flex items-center gap-3">
-                                <span className="material-symbols-outlined text-primary text-4xl">list_alt</span>
-                                เนื้อหาหลักสูตร
-                            </h2>
-                            <div className="space-y-6">
-                                {displayCurriculum.map((item, idx) => (
-                                    <div key={idx} className="glass-card p-8 border-white/5 hover:border-primary/20 transition-all">
-                                        <h3 className="text-xl font-bold text-white mb-6 flex items-center justify-between">
-                                            {item.module}
-                                            <span className="bg-primary/10 text-primary text-xs px-3 py-1 rounded-full font-black">{item.lessons.length} LESSONS</span>
-                                        </h3>
-                                        <div className="space-y-4">
-                                            {item.lessons.map((lesson, lIdx) => (
-                                                <div key={lIdx} className="flex items-center gap-4 text-slate-400 group cursor-default">
-                                                    <span className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center text-[10px] font-black group-hover:bg-primary/20 group-hover:text-primary transition-all pointer-events-none">
-                                                        {(lIdx + 1).toString().padStart(2, '0')}
-                                                    </span>
-                                                    <span className="text-sm font-medium">{lesson}</span>
-                                                </div>
-                                            ))}
+                        {displayCurriculum.length > 0 && (
+                            <div className="animate-fade-up animate-delay-200 mt-16">
+                                <h2 className="text-3xl font-black text-white mb-8 flex items-center gap-3">
+                                    <span className="material-symbols-outlined text-primary text-4xl">list_alt</span>
+                                    เนื้อหาหลักสูตร
+                                </h2>
+                                <div className="space-y-6">
+                                    {displayCurriculum.map((item, idx) => (
+                                        <div key={idx} className="glass-card p-8 border-white/5 hover:border-primary/20 transition-all">
+                                            <h3 className="text-xl font-bold text-white mb-6 flex items-center justify-between">
+                                                {item.module}
+                                                <span className="bg-primary/10 text-primary text-xs px-3 py-1 rounded-full font-black">{item.lessons.length} LESSONS</span>
+                                            </h3>
+                                            <div className="space-y-4">
+                                                {item.lessons.map((lesson, lIdx) => (
+                                                    <div key={lIdx} className="flex items-center gap-4 text-slate-400 group cursor-default">
+                                                        <span className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center text-[10px] font-black group-hover:bg-primary/20 group-hover:text-primary transition-all pointer-events-none">
+                                                            {(lIdx + 1).toString().padStart(2, '0')}
+                                                        </span>
+                                                        <span className="text-sm font-medium">{lesson}</span>
+                                                    </div>
+                                                ))}
+                                            </div>
                                         </div>
-                                    </div>
-                                ))}
+                                    ))}
+                                </div>
                             </div>
-                        </div>
+                        )}
                     </div>
 
                     {/* Right: Info Sidebar */}
