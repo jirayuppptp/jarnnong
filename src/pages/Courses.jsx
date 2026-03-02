@@ -103,9 +103,10 @@ function Courses() {
                                         <h3 className="text-2xl font-black text-white mb-4 line-clamp-2 leading-[1.4] font-display">
                                             {course.title}
                                         </h3>
-                                        <p className="text-slate-400 text-sm leading-relaxed mb-8 line-clamp-3 font-light">
-                                            {course.description}
-                                        </p>
+                                        <div
+                                            className="text-slate-400 text-sm leading-relaxed mb-8 line-clamp-3 font-light ql-editor !p-0 prose prose-invert max-w-none"
+                                            dangerouslySetInnerHTML={{ __html: course.description }}
+                                        />
 
                                         <div className="mt-auto pt-6 border-t border-white/5 flex items-center justify-between">
                                             <div>

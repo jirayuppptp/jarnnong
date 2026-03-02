@@ -59,9 +59,10 @@ export default function CourseSection() {
                                     <h3 className="text-xl font-bold text-white mb-4 line-clamp-2 leading-[1.4] group-hover:text-primary transition-colors">
                                         {course.title}
                                     </h3>
-                                    <p className="text-text-secondary text-sm leading-relaxed mb-6 line-clamp-2 font-light">
-                                        {course.description}
-                                    </p>
+                                    <div
+                                        className="text-text-secondary text-sm leading-relaxed mb-6 line-clamp-2 font-light ql-editor !p-0"
+                                        dangerouslySetInnerHTML={{ __html: course.description }}
+                                    />
                                     <div className="mt-auto flex items-center justify-between">
                                         <span className="text-primary font-mono font-bold">{course.price} ฿</span>
                                         <span className="text-xs text-text-secondary flex items-center gap-1">

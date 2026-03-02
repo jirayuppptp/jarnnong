@@ -1,7 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
+import ReactQuill from 'react-quill-new';
+import 'react-quill-new/dist/quill.snow.css';
 import { compressImage } from '../../utils/imageHelper';
 
 export default function ManageCourses() {
+    const quillRef = useRef(null);
     const [courses, setCourses] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingCourse, setEditingCourse] = useState(null);
@@ -97,6 +100,15 @@ export default function ManageCourses() {
             saveToLocalStorage(filtered);
         }
     };
+
+    const quillModules = useMemo(() => ({
+        toolbar: [
+            [{ 'header': [1, 2, false] }],
+            ['bold', 'italic', 'underline', 'strike'],
+            [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+            ['link', 'clean']
+        ],
+    }), []);
 
     return (
         <div className="p-4 md:p-8 space-y-6 animate-in fade-in duration-500">
@@ -247,17 +259,27 @@ export default function ManageCourses() {
                                 </div>
                             </div>
 
-                            <div>
-                                <label className="block text-xs font-bold text-slate-400 mb-2 uppercase tracking-wider">รายละเอียดหลักสูตรเบื้องต้น</label>
-                                <textarea
-                                    required
-                                    rows="4"
-                                    placeholder="ใส่คำอธิบายสั้นๆ เกี่ยวกับหลักสูตร..."
+                            <div className="quill-container">
+                                <label className="block text-xs font-bold text-slate-400 mb-4 uppercase tracking-wider">รายละเอียดหลักสูตร (Rich Text)</label>
+                                <ReactQuill
+                                    ref={quillRef}
+                                    theme="snow"
                                     value={formData.description}
-                                    onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#0df2f2]/50 text-sm leading-relaxed"
-                                ></textarea>
+                                    onChange={(val) => setFormData({ ...formData, description: val })}
+                                    modules={quillModules}
+                                    className="bg-white/5 rounded-xl text-white border-white/10"
+                                />
                             </div>
+
+                            <style>{`
+                                .ql-toolbar.ql-snow { border-color: rgba(255,255,255,0.1) !important; background: rgba(255,255,255,0.05); border-radius: 12px 12px 0 0; }
+                                .ql-container.ql-snow { border-color: rgba(255,255,255,0.1) !important; border-radius: 0 0 12px 12px; height: 200px; font-size: 14px; }
+                                .ql-editor { color: #f1f5f9; }
+                                .ql-snow .ql-stroke { stroke: #94a3b8; }
+                                .ql-snow .ql-fill { fill: #94a3b8; }
+                                .ql-snow.ql-toolbar button:hover .ql-stroke { stroke: #0df2f2; }
+                                .ql-snow.ql-toolbar button.ql-active .ql-stroke { stroke: #0df2f2; }
+                            `}</style>
 
                             <div className="flex gap-4 pt-4">
                                 <button
