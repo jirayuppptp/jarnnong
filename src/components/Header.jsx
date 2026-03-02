@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { NavLink } from 'react-router-dom'
 
 const navItems = [
@@ -9,6 +10,8 @@ const navItems = [
 ]
 
 export default function Header() {
+    const [isMenuOpen, setIsMenuOpen] = useState(false)
+
     return (
         <header className="sticky top-0 z-50 w-full border-b border-white/5 bg-[#05070A]/80 backdrop-blur-md">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -51,11 +54,53 @@ export default function Header() {
                                 type="text"
                             />
                         </div>
-                        <NavLink to="/admin/login" className="btn-primary px-5 py-2 text-sm text-center">
+                        <NavLink to="/admin/login" className="hidden sm:inline-flex btn-primary px-5 py-2 text-sm text-center">
                             เข้าสู่ระบบ
                         </NavLink>
+
+                        {/* Hamburger Button */}
+                        <button
+                            onClick={() => setIsMenuOpen(!isMenuOpen)}
+                            className="md:hidden p-2 text-white hover:text-primary transition-colors"
+                        >
+                            <span className="material-symbols-outlined text-3xl">
+                                {isMenuOpen ? 'close' : 'menu'}
+                            </span>
+                        </button>
                     </div>
                 </div>
+            </div>
+
+            {/* Mobile Menu Overlay */}
+            <div className={`
+                md:hidden fixed inset-0 top-16 bg-[#05070A]/95 backdrop-blur-xl z-40 transition-all duration-300
+                ${isMenuOpen ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-full pointer-events-none'}
+            `}>
+                <nav className="flex flex-col p-6 gap-4">
+                    {navItems.map((item) => (
+                        <NavLink
+                            key={item.label}
+                            to={item.to}
+                            onClick={() => setIsMenuOpen(false)}
+                            className={({ isActive }) =>
+                                `text-lg font-bold py-3 border-b border-white/5 transition-all ${isActive && item.to !== '#' ? 'text-primary pl-4' : 'text-text-secondary hover:text-primary'
+                                }`
+                            }
+                        >
+                            {item.label}
+                        </NavLink>
+                    ))}
+                    <div className="mt-8">
+                        <NavLink
+                            to="/admin/login"
+                            onClick={() => setIsMenuOpen(false)}
+                            className="btn-primary w-full py-4 text-center flex items-center justify-center gap-2"
+                        >
+                            <span className="material-symbols-outlined">login</span>
+                            เข้าสู่ระบบสำหรับแอดมิน
+                        </NavLink>
+                    </div>
+                </nav>
             </div>
         </header>
     )
