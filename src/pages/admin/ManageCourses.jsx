@@ -281,7 +281,7 @@ export default function ManageCourses() {
                         </div>
 
                         <form onSubmit={handleSubmit} className="space-y-5">
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                            <div className="space-y-5">
                                 <div>
                                     <label className="block text-xs font-bold text-slate-400 mb-2 uppercase tracking-wider">ชื่อหลักสูตร</label>
                                     <input
@@ -290,17 +290,6 @@ export default function ManageCourses() {
                                         placeholder="เช่น Mastery of Generative AI"
                                         value={formData.title}
                                         onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                                        className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#0df2f2]/50 text-sm"
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-xs font-bold text-slate-400 mb-2 uppercase tracking-wider">หมวดหมู่</label>
-                                    <input
-                                        type="text"
-                                        required
-                                        placeholder="เช่น AI Tutorials, Business"
-                                        value={formData.category}
-                                        onChange={(e) => setFormData({ ...formData, category: e.target.value })}
                                         className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#0df2f2]/50 text-sm"
                                     />
                                 </div>
@@ -320,7 +309,18 @@ export default function ManageCourses() {
                                 <p className="text-[10px] text-right text-slate-500 mt-1">{formData.shortDescription.length}/180</p>
                             </div>
 
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+                                <div>
+                                    <label className="block text-xs font-bold text-slate-400 mb-2 uppercase tracking-wider">หมวดหมู่</label>
+                                    <input
+                                        type="text"
+                                        required
+                                        placeholder="เช่น AI Tutorials, Business"
+                                        value={formData.category}
+                                        onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                                        className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#0df2f2]/50 text-sm"
+                                    />
+                                </div>
                                 <div>
                                     <label className="block text-xs font-bold text-slate-400 mb-2 uppercase tracking-wider">ราคา (บาท)</label>
                                     <input
