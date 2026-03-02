@@ -1,6 +1,6 @@
 export default function AdminDashboard() {
     const stats = [
-        { label: 'เครื่องมือ AI ทั้งหมด', value: '24', icon: 'auto_fix', color: 'bg-blue-500/20 text-blue-400' },
+        { label: 'หลักสูตรอบรมทั้งหมด', value: '8', icon: 'school', color: 'bg-blue-500/20 text-blue-400' },
         { label: 'ข่าวสารวันนี้', value: '12', icon: 'newspaper', color: 'bg-emerald-500/20 text-emerald-400' },
         { label: 'คำศัพท์ในสารบัญ', value: '156', icon: 'menu_book', color: 'bg-purple-500/20 text-purple-400' },
         { label: 'ผู้เข้าชมสัปดาห์นี้', value: '1.2k', icon: 'trending_up', color: 'bg-orange-500/20 text-orange-400' },
@@ -40,7 +40,7 @@ export default function AdminDashboard() {
                             <div key={i} className="flex items-center gap-4 p-3 rounded-xl hover:bg-white/5 transition-colors">
                                 <div className="w-2 h-2 rounded-full bg-[#0df2f2]"></div>
                                 <div className="flex-1">
-                                    <p className="text-sm font-medium text-white">เพิ่มเครื่องมือ AI ใหม่: "Sora OpenAI"</p>
+                                    <p className="text-sm font-medium text-white">เพิ่มหลักสูตรอบรมใหม่: "AI for Business"</p>
                                     <p className="text-[10px] text-slate-500 uppercase mt-1">2 ชั่วโมงที่แล้ว • โดย Admin</p>
                                 </div>
                             </div>
