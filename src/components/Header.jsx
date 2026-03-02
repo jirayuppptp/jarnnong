@@ -12,7 +12,7 @@ const navItems = [
 
 export default function Header() {
     const [isMenuOpen, setIsMenuOpen] = useState(false)
-    const { user, isAuthenticated } = useAuth()
+    const { isAuthenticated } = useAuth()
 
     useEffect(() => {
         if (isMenuOpen) {
@@ -35,7 +35,7 @@ export default function Header() {
                                 alt="JarnNong"
                                 className="w-9 h-9 rounded-full object-cover border-2 border-primary/50 group-hover:border-primary transition-all shadow-[0_0_10px_rgba(0,242,255,0.3)]"
                             />
-                            <span className="text-xl font-bold tracking-tight text-white">JarnNong.com</span>
+                            <span className="text-xl font-bold tracking-tight text-white font-display">JarnNong.com</span>
                         </NavLink>
                         <nav className="hidden md:flex items-center gap-6">
                             {navItems.map((item) => (
@@ -43,9 +43,9 @@ export default function Header() {
                                     key={item.label}
                                     to={item.to}
                                     className={({ isActive }) =>
-                                        `text-sm font-medium transition-colors ${isActive && item.to !== '#'
+                                        `text-sm font-bold transition-all hover:text-primary tracking-tight ${isActive
                                             ? 'text-primary'
-                                            : 'text-text-secondary hover:text-primary'
+                                            : 'text-text-secondary'
                                         }`
                                     }
                                 >
@@ -57,27 +57,27 @@ export default function Header() {
 
                     {/* Right actions */}
                     <div className="flex items-center gap-4">
-                        <div className="hidden lg:flex items-center bg-white/5 rounded-lg px-3 py-1.5 neon-border focus-within:border-primary/50 transition-all">
-                            <span className="material-symbols-outlined text-primary/60 text-sm">search</span>
+                        <div className="hidden lg:flex items-center bg-white/5 rounded-lg px-3 py-1.5 neon-border focus-within:border-primary/50 transition-all border border-white/10 group">
+                            <span className="material-symbols-outlined text-primary/60 text-sm group-focus-within:text-primary">search</span>
                             <input
-                                className="bg-transparent border-none focus:ring-0 text-sm w-48 text-white placeholder:text-text-secondary outline-none"
+                                className="bg-transparent border-none focus:ring-0 text-xs w-48 text-white placeholder:text-text-secondary outline-none font-medium ml-2 uppercase tracking-widest"
                                 placeholder="ค้นหาหลักสูตร..."
                                 type="text"
                             />
                         </div>
 
                         {isAuthenticated ? (
-                            <NavLink to="/admin/dashboard" className="hidden sm:flex items-center gap-3 bg-white/5 hover:bg-white/10 px-4 py-2 rounded-xl transition-all border border-white/5 group">
+                            <NavLink to="/admin/dashboard" className="hidden sm:flex items-center gap-3 bg-white/5 hover:bg-white/10 px-4 py-2 rounded-xl transition-all border border-white/5 group shadow-lg shadow-black/50">
                                 <div className="text-right hidden xl:block">
-                                    <p className="text-[10px] font-bold text-white leading-none">ยินดีต้อนรับ</p>
-                                    <p className="text-[8px] text-primary uppercase mt-1">Admin Dashboard</p>
+                                    <p className="text-[10px] font-black text-white leading-none uppercase">Admin Access</p>
+                                    <p className="text-[8px] text-primary uppercase mt-1 tracking-widest font-black">Control Panel</p>
                                 </div>
-                                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-blue-500 flex items-center justify-center shadow-lg shadow-primary/20 group-hover:scale-105 transition-transform">
-                                    <span className="material-symbols-outlined text-slate-900 text-lg font-bold">dashboard</span>
+                                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-blue-600 flex items-center justify-center shadow-lg shadow-primary/20 group-hover:scale-105 transition-transform">
+                                    <span className="material-symbols-outlined text-slate-900 text-lg font-bold">shield</span>
                                 </div>
                             </NavLink>
                         ) : (
-                            <NavLink to="/admin/login" className="hidden sm:inline-flex btn-primary px-5 py-2 text-sm text-center">
+                            <NavLink to="/admin/login" className="hidden sm:inline-flex btn-primary px-6 py-2.5 text-xs font-black uppercase tracking-widest text-center rounded-xl shadow-[0_0_15px_rgba(0,242,255,0.2)] hover:shadow-primary/40 transition-all">
                                 เข้าสู่ระบบ
                             </NavLink>
                         )}
@@ -85,9 +85,9 @@ export default function Header() {
                         {/* Hamburger Button */}
                         <button
                             onClick={() => setIsMenuOpen(!isMenuOpen)}
-                            className="md:hidden p-2 text-white hover:text-primary transition-colors"
+                            className="md:hidden w-10 h-10 flex items-center justify-center rounded-xl bg-white/5 border border-white/10 text-white hover:text-primary transition-all active:scale-95"
                         >
-                            <span className="material-symbols-outlined text-3xl">
+                            <span className="material-symbols-outlined text-2xl">
                                 {isMenuOpen ? 'close' : 'menu'}
                             </span>
                         </button>
@@ -97,24 +97,14 @@ export default function Header() {
 
             {/* Mobile Menu Overlay */}
             <div className={`
-                md:hidden fixed inset-0 bg-[#05070A] z-[100] transition-all duration-500 ease-in-out
-                ${isMenuOpen ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-full pointer-events-none'}
+                md:hidden fixed inset-0 top-16 bg-[#05070A] backdrop-blur-2xl z-[100] transition-all duration-500 ease-in-out
+                ${isMenuOpen ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4 pointer-events-none'}
             `}>
-                {/* Close Button Inside Mobile Menu */}
-                <div className="flex justify-end p-4">
-                    <button
-                        onClick={() => setIsMenuOpen(false)}
-                        className="p-2 text-white hover:text-primary transition-colors focus:outline-none"
-                    >
-                        <span className="material-symbols-outlined text-4xl">close</span>
-                    </button>
-                </div>
-
                 {/* Decorative background glow */}
                 <div className="absolute top-0 right-0 w-64 h-64 bg-primary/10 rounded-full blur-[100px] -mr-20 -mt-20 pointer-events-none"></div>
 
-                <nav className="relative z-10 flex flex-col p-6 pt-2">
-                    <div className="space-y-1">
+                <nav className="relative z-10 flex flex-col p-6 pt-10">
+                    <div className="space-y-2">
                         {navItems.map((item, index) => (
                             <NavLink
                                 key={item.label}
@@ -122,27 +112,27 @@ export default function Header() {
                                 onClick={() => setIsMenuOpen(false)}
                                 style={{ transitionDelay: `${index * 50}ms` }}
                                 className={({ isActive }) =>
-                                    `flex items-center justify-between text-lg font-medium py-4 px-4 rounded-xl transition-all duration-300 ${isMenuOpen ? 'translate-x-0 opacity-100' : '-translate-x-4 opacity-0'
-                                    } ${isActive && item.to !== '#'
-                                        ? 'bg-primary/10 text-primary border border-primary/20'
-                                        : 'text-slate-300 hover:bg-white/5 hover:text-white'
+                                    `flex items-center justify-between text-xl font-black py-4 px-6 rounded-2xl transition-all duration-300 uppercase tracking-tight ${isMenuOpen ? 'translate-x-0 opacity-100' : '-translate-x-4 opacity-0'
+                                    } ${isActive
+                                        ? 'bg-primary/10 text-primary border border-primary/20 shadow-[0_0_20px_rgba(0,242,255,0.1)]'
+                                        : 'text-slate-400 hover:bg-white/5 hover:text-white'
                                     }`
                                 }
                             >
                                 <span>{item.label}</span>
-                                <span className={`material-symbols-outlined text-sm opacity-50 transition-transform ${isMenuOpen ? 'scale-100' : 'scale-0'}`}>
-                                    chevron_right
+                                <span className={`material-symbols-outlined text-xl opacity-50 transition-transform ${isMenuOpen ? 'scale-100' : 'scale-0'}`}>
+                                    arrow_forward
                                 </span>
                             </NavLink>
                         ))}
                     </div>
 
-                    <div className={`mt-10 transition-all duration-500 delay-300 ${isMenuOpen ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}`}>
+                    <div className={`mt-12 transition-all duration-500 delay-300 ${isMenuOpen ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}`}>
                         {isAuthenticated ? (
                             <NavLink
                                 to="/admin/dashboard"
                                 onClick={() => setIsMenuOpen(false)}
-                                className="btn-primary w-full py-4 text-center flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(0,242,255,0.15)] active:scale-[0.98]"
+                                className="w-full py-4 text-center flex items-center justify-center gap-3 bg-gradient-to-r from-primary to-blue-600 text-slate-900 font-black rounded-2xl shadow-[0_0_30px_rgba(0,242,255,0.2)] active:scale-[0.98] uppercase text-sm tracking-widest"
                             >
                                 <span className="material-symbols-outlined text-xl">admin_panel_settings</span>
                                 ไปที่แดชบอร์ด
@@ -151,13 +141,13 @@ export default function Header() {
                             <NavLink
                                 to="/admin/login"
                                 onClick={() => setIsMenuOpen(false)}
-                                className="btn-primary w-full py-4 text-center flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(0,242,255,0.15)] active:scale-[0.98]"
+                                className="w-full py-4 text-center flex items-center justify-center gap-3 bg-white/5 hover:bg-white/10 text-white font-black rounded-2xl border border-white/10 active:scale-[0.98] uppercase text-sm tracking-widest"
                             >
                                 <span className="material-symbols-outlined text-xl">login</span>
                                 เข้าสู่ระบบแอดมิน
                             </NavLink>
                         )}
-                        <p className="text-center text-sm text-slate-500 mt-8 font-medium tracking-wider uppercase">
+                        <p className="text-center text-[10px] text-slate-500 mt-10 font-bold tracking-[0.4em] uppercase">
                             JarnNong AI Hub © 2024
                         </p>
                     </div>

@@ -18,6 +18,7 @@ import {
 function ManageNews() {
     const quillRef = useRef(null);
     const [news, setNews] = useState([]);
+    const [loading, setLoading] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingNews, setEditingNews] = useState(null);
     const [loadingImage, setLoadingImage] = useState(false);
@@ -39,6 +40,10 @@ function ManageNews() {
                 id: doc.id
             }));
             setNews(newsData);
+            setLoading(false);
+        }, (error) => {
+            console.error("Error fetching news:", error);
+            setLoading(false);
         });
 
         return () => unsubscribe();
@@ -72,10 +77,22 @@ function ManageNews() {
     const handleOpenModal = (item = null) => {
         if (item) {
             setEditingNews(item);
-            setFormData({ ...item });
+            setFormData({
+                title: item.title || '',
+                date: item.date || new Date().toISOString().split('T')[0],
+                content: item.content || item.summary || '',
+                category: item.category || 'AI Updates',
+                image: item.image || ''
+            });
         } else {
             setEditingNews(null);
-            setFormData({ title: '', date: new Date().toISOString().split('T')[0], content: '', category: 'AI Updates', image: '' });
+            setFormData({
+                title: '',
+                date: new Date().toISOString().split('T')[0],
+                content: '',
+                category: 'AI Updates',
+                image: ''
+            });
         }
         setIsModalOpen(true);
     };
@@ -101,13 +118,16 @@ function ManageNews() {
         try {
             if (editingNews) {
                 const newsDoc = doc(db, 'news', editingNews.id);
-                const { id, ...data } = formData;
-                await updateDoc(newsDoc, data);
+                await updateDoc(newsDoc, {
+                    ...formData,
+                    updatedAt: new Date().toISOString()
+                });
             } else {
                 const newItem = {
                     ...formData,
                     initialViews: Math.floor(Math.random() * (2500 - 800 + 1)) + 800,
-                    realViews: 0
+                    realViews: 0,
+                    createdAt: new Date().toISOString()
                 };
                 await addDoc(collection(db, 'news'), newItem);
             }
@@ -164,11 +184,11 @@ function ManageNews() {
     }), []);
 
     return (
-        <div className="p-4 md:p-8">
+        <div className="p-4 md:p-8 space-y-6">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
                 <div>
-                    <h1 className="text-3xl font-black text-white mb-2 font-display">Manage AI News</h1>
-                    <p className="text-slate-400">สร้างและแก้ไขข่าวสารวงการ AI (Firestore)</p>
+                    <h1 className="text-3xl font-black text-white mb-2 font-display uppercase tracking-tight">จัดการข่าวสาร AI</h1>
+                    <p className="text-slate-400">สร้างและแก้ไขข่าวสารวงการ AI ในระบบ (Firestore)</p>
                 </div>
                 <div className="flex gap-3">
                     {localStorage.getItem('jarnnong_news') && (
@@ -183,22 +203,22 @@ function ManageNews() {
                     )}
                     <button
                         onClick={() => handleOpenModal()}
-                        className="bg-[#0df2f2] text-[#050d0d] px-6 py-3 rounded-xl font-bold flex items-center gap-2 hover:scale-105 transition-transform"
+                        className="bg-[#0df2f2] text-[#050d0d] px-6 py-3 rounded-xl font-bold flex items-center gap-2 hover:shadow-[0_0_20px_rgba(13,242,242,0.4)] transition-all"
                     >
-                        <span className="material-symbols-outlined">add</span>
+                        <span className="material-symbols-outlined text-xl">add</span>
                         เพิ่มข่าวใหม่
                     </button>
                 </div>
             </div>
 
-            <div className="glass-card overflow-hidden">
+            <div className="bg-[#0a1a1a]/80 border border-white/5 rounded-2xl overflow-hidden backdrop-blur-sm shadow-xl">
                 <div className="overflow-x-auto">
                     <table className="w-full text-left border-collapse">
                         <thead>
                             <tr className="border-b border-white/5 bg-white/5 text-[10px] uppercase tracking-widest text-[#0df2f2] font-bold">
                                 <th className="px-6 py-4">รูปภาพ</th>
                                 <th className="px-6 py-4">หัวข้อข่าว</th>
-                                <th className="px-6 py-4 text-center">ยอดเริ่มต้น (สุ่ม)</th>
+                                <th className="px-6 py-4 text-center">ยอดสุ่ม</th>
                                 <th className="px-6 py-4 text-center">คลิกจริง</th>
                                 <th className="px-6 py-4 text-center">ยอดรวม</th>
                                 <th className="px-6 py-4">วันที่</th>
@@ -210,13 +230,13 @@ function ManageNews() {
                                 <tr key={item.id} className="hover:bg-white/[0.02] transition-colors group">
                                     <td className="px-6 py-4">
                                         <div className="w-16 h-10 rounded-lg overflow-hidden bg-white/5 border border-white/10">
-                                            <img src={item.image} alt="" className="w-full h-full object-cover" />
+                                            <img src={item.image || 'https://via.placeholder.com/150'} alt="" className="w-full h-full object-cover" />
                                         </div>
                                     </td>
                                     <td className="px-6 py-4">
-                                        <span className="font-bold text-white text-sm line-clamp-1">{item.title}</span>
-                                        <div className="mt-1">
-                                            <span className="px-2 py-0.5 rounded-md bg-[#0df2f2]/10 text-[9px] text-[#0df2f2] border border-[#0df2f2]/20 uppercase font-black tracking-tighter">
+                                        <div className="flex flex-col">
+                                            <span className="font-bold text-white text-sm line-clamp-1">{item.title}</span>
+                                            <span className="px-2 py-0.5 rounded-md bg-[#0df2f2]/10 text-[9px] text-[#0df2f2] border border-[#0df2f2]/20 uppercase font-black tracking-widest mt-1 w-fit">
                                                 {item.category}
                                             </span>
                                         </div>
@@ -243,7 +263,7 @@ function ManageNews() {
                                     </td>
                                 </tr>
                             ))}
-                            {news.length === 0 && (
+                            {news.length === 0 && !loading && (
                                 <tr>
                                     <td colSpan="7" className="px-6 py-12 text-center text-slate-500 italic">ไม่พบข้อมูลข่าวสาร</td>
                                 </tr>
@@ -254,10 +274,10 @@ function ManageNews() {
             </div>
 
             {isModalOpen && (
-                <div className="fixed inset-0 z-50 flex items-start justify-center p-4 bg-[#050d0d]/95 backdrop-blur-sm overflow-y-auto pt-20 pb-20">
-                    <div className="bg-[#0a1a1a] border border-white/10 w-full max-w-4xl rounded-3xl p-6 md:p-10 shadow-2xl">
+                <div className="fixed inset-0 z-50 flex items-start justify-center p-4 bg-black/80 backdrop-blur-sm overflow-y-auto pt-10 pb-10">
+                    <div className="bg-[#0a1a1a] border border-[#0df2f2]/20 w-full max-w-4xl rounded-3xl p-8 shadow-2xl animate-in zoom-in-95 duration-200">
                         <div className="flex justify-between items-center mb-8">
-                            <h2 className="text-2xl font-bold text-white font-display">
+                            <h2 className="text-2xl font-black text-white font-display">
                                 {editingNews ? 'แก้ไขข่าวสาร' : 'เพิ่มข่าวใหม่'}
                             </h2>
                             <button onClick={() => setIsModalOpen(false)} className="text-slate-400 hover:text-white">
@@ -274,10 +294,10 @@ function ManageNews() {
                                     placeholder="ใส่หัวข้อข่าว..."
                                     value={formData.title}
                                     onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-[#0df2f2]/50 text-sm"
+                                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#0df2f2]/50 text-sm"
                                 />
                             </div>
-                            <div className="grid grid-cols-2 gap-4">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                                 <div>
                                     <label className="block text-xs font-bold text-slate-400 mb-2 uppercase tracking-wider">วันที่เผยแพร่</label>
                                     <input
@@ -285,7 +305,7 @@ function ManageNews() {
                                         required
                                         value={formData.date}
                                         onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-                                        className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-[#0df2f2]/50 text-sm font-mono"
+                                        className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#0df2f2]/50 text-sm font-mono"
                                     />
                                 </div>
                                 <div>
@@ -296,17 +316,18 @@ function ManageNews() {
                                         placeholder="เช่น AI Updates, Models"
                                         value={formData.category}
                                         onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                                        className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-[#0df2f2]/50 text-sm"
+                                        className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#0df2f2]/50 text-sm"
                                     />
                                 </div>
                             </div>
+
                             <div>
                                 <label className="block text-xs font-bold text-slate-400 mb-2 uppercase tracking-wider">อัปโหลดรูปภาพ (บีบอัดอัตโนมัติ)</label>
                                 <div className="flex items-center gap-4">
                                     <label className="flex-1 flex items-center justify-center gap-2 px-4 py-8 border-2 border-dashed border-white/10 rounded-2xl hover:border-[#0df2f2]/50 transition-colors cursor-pointer group">
                                         <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
                                         <span className="material-symbols-outlined text-3xl text-slate-500 group-hover:text-[#0df2f2]">upload_file</span>
-                                        <span className="text-slate-400 group-hover:text-white">{loadingImage ? 'กำลังประมวลผล...' : 'คลิกเพื่อเลือกไฟล์ภาพ'}</span>
+                                        <span className="text-slate-400 group-hover:text-white text-xs">{loadingImage ? 'กำลังประมวลผล...' : 'คลิกเพื่อเลือกไฟล์ภาพ'}</span>
                                     </label>
                                     {formData.image && (
                                         <div className="w-32 h-20 rounded-xl overflow-hidden border border-white/10 shrink-0">
@@ -315,6 +336,7 @@ function ManageNews() {
                                     )}
                                 </div>
                             </div>
+
                             <div className="quill-container">
                                 <label className="block text-xs font-bold text-slate-400 mb-4 uppercase tracking-wider">เนื้อหาข่าว (Rich Text)</label>
                                 <ReactQuill
@@ -326,17 +348,19 @@ function ManageNews() {
                                     className="bg-white/5 rounded-xl text-white border-white/10"
                                 />
                             </div>
-                            <div className="flex gap-4 pt-4">
+
+                            <div className="flex gap-4 pt-4 border-t border-white/5">
                                 <button
                                     type="submit"
-                                    className="flex-1 bg-[#0df2f2] text-[#050d0d] font-black py-4 rounded-xl hover:scale-[1.02] transition-all"
+                                    className="flex-1 bg-[#0df2f2] text-[#050d0d] font-black py-4 rounded-xl hover:shadow-[0_0_20px_rgba(13,242,242,0.4)] transition-all flex items-center justify-center gap-2"
                                 >
+                                    <span className="material-symbols-outlined">save</span>
                                     บันทึกข้อมูลข่าวสาร
                                 </button>
                                 <button
                                     type="button"
                                     onClick={() => setIsModalOpen(false)}
-                                    className="px-8 bg-white/5 text-white font-bold py-4 rounded-xl hover:bg-white/10 transition-all border border-white/10"
+                                    className="px-8 bg-white/10 text-white font-bold py-4 rounded-xl hover:bg-white/20 transition-all"
                                 >
                                     ยกเลิก
                                 </button>

@@ -22,25 +22,30 @@ export default function ManageCourses() {
     const [editingCourse, setEditingCourse] = useState(null);
     const [loadingImage, setLoadingImage] = useState(false);
     const [isMigrating, setIsMigrating] = useState(false);
+    const [loading, setLoading] = useState(false);
 
     const [formData, setFormData] = useState({
         title: '',
-        category: '',
+        shortDescription: '',
         description: '',
-        duration: '',
         price: '',
-        link: '',
-        image: ''
+        image: '',
+        category: '',
+        mentorName: '',
+        duration: '',
+        level: 'Beginner'
     });
 
     useEffect(() => {
-        const q = query(collection(db, 'courses'), orderBy('title', 'asc'));
+        const q = query(collection(db, 'courses'), orderBy('createdAt', 'desc'));
         const unsubscribe = onSnapshot(q, (snapshot) => {
             const coursesData = snapshot.docs.map(doc => ({
                 ...doc.data(),
                 id: doc.id
             }));
             setCourses(coursesData);
+        }, (error) => {
+            console.error("Error fetching courses:", error);
         });
 
         return () => unsubscribe();
@@ -57,8 +62,15 @@ export default function ManageCourses() {
             const batch = writeBatch(db);
             localData.forEach(course => {
                 const newDocRef = doc(collection(db, 'courses'));
-                const { id, ...data } = course; // Remove local numeric ID
-                batch.set(newDocRef, data);
+                const { id, ...data } = course;
+                batch.set(newDocRef, {
+                    ...data,
+                    shortDescription: data.shortDescription || '',
+                    mentorName: data.mentorName || '',
+                    level: data.level || 'Beginner',
+                    createdAt: new Date().toISOString(),
+                    updatedAt: new Date().toISOString()
+                });
             });
             await batch.commit();
             alert('ย้ายข้อมูลสำเร็จ!');
@@ -74,17 +86,29 @@ export default function ManageCourses() {
     const handleOpenModal = (course = null) => {
         if (course) {
             setEditingCourse(course);
-            setFormData({ ...course });
+            setFormData({
+                title: course.title || '',
+                shortDescription: course.shortDescription || '',
+                description: course.description || '',
+                price: course.price || '',
+                image: course.image || '',
+                category: course.category || '',
+                mentorName: course.mentorName || '',
+                duration: course.duration || '',
+                level: course.level || 'Beginner'
+            });
         } else {
             setEditingCourse(null);
             setFormData({
                 title: '',
-                category: '',
+                shortDescription: '',
                 description: '',
-                duration: '',
                 price: '',
-                link: '',
-                image: ''
+                image: '',
+                category: '',
+                mentorName: '',
+                duration: '',
+                level: 'Beginner'
             });
         }
         setIsModalOpen(true);
@@ -108,25 +132,37 @@ export default function ManageCourses() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setLoading(true);
         try {
             if (editingCourse) {
                 const courseDoc = doc(db, 'courses', editingCourse.id);
-                const { id, ...data } = formData;
-                await updateDoc(courseDoc, data);
+                await updateDoc(courseDoc, {
+                    ...formData,
+                    updatedAt: new Date().toISOString()
+                });
+                alert("อัปเดตหลักสูตรเรียบร้อยแล้ว");
             } else {
-                await addDoc(collection(db, 'courses'), formData);
+                await addDoc(collection(db, 'courses'), {
+                    ...formData,
+                    createdAt: new Date().toISOString(),
+                    updatedAt: new Date().toISOString()
+                });
+                alert("เพิ่มหลักสูตรใหม่เรียบร้อยแล้ว");
             }
             setIsModalOpen(false);
         } catch (error) {
             console.error('Save failed:', error);
             alert('เกิดข้อผิดพลาดในการบันทึกข้อมูล');
+        } finally {
+            setLoading(false);
         }
     };
 
     const handleDelete = async (id) => {
-        if (window.confirm('ยืนยันการลบหลักสูตรนี้?')) {
+        if (window.confirm('ยืนยันการลบหลักสูตรนี้? การกระทำนี้ไม่สามารถย้อนกลับได้')) {
             try {
                 await deleteDoc(doc(db, 'courses', id));
+                alert("ลบหลักสูตรเรียบร้อยแล้ว");
             } catch (error) {
                 console.error('Delete failed:', error);
                 alert('เกิดข้อผิดพลาดในการลบข้อมูล');
@@ -171,14 +207,14 @@ export default function ManageCourses() {
                 </div>
             </div>
 
-            <div className="bg-[#0a1a1a]/80 border border-white/5 rounded-2xl overflow-hidden backdrop-blur-sm">
+            <div className="bg-[#0a1a1a]/80 border border-white/5 rounded-2xl overflow-hidden backdrop-blur-sm shadow-xl">
                 <div className="overflow-x-auto">
                     <table className="w-full text-left border-collapse">
                         <thead>
                             <tr className="border-b border-white/5 bg-white/5 text-[10px] uppercase tracking-widest text-[#0df2f2] font-bold">
                                 <th className="px-6 py-4">รูปปก</th>
                                 <th className="px-6 py-4">ชื่อหลักสูตร / หมวดหมู่</th>
-                                <th className="px-6 py-4 text-center">ระยะเวลา</th>
+                                <th className="px-6 py-4 text-center">ระดับ</th>
                                 <th className="px-6 py-4 text-center">ราคา</th>
                                 <th className="px-6 py-4 text-right">จัดการ</th>
                             </tr>
@@ -188,7 +224,7 @@ export default function ManageCourses() {
                                 <tr key={course.id} className="hover:bg-white/[0.02] transition-colors group">
                                     <td className="px-6 py-4">
                                         <div className="w-20 h-12 rounded-lg overflow-hidden bg-white/5 border border-white/10">
-                                            <img src={course.image} alt="" className="w-full h-full object-cover" />
+                                            <img src={course.image || 'https://via.placeholder.com/150'} alt="" className="w-full h-full object-cover" />
                                         </div>
                                     </td>
                                     <td className="px-6 py-4">
@@ -198,10 +234,15 @@ export default function ManageCourses() {
                                         </div>
                                     </td>
                                     <td className="px-6 py-4 text-center">
-                                        <span className="text-xs text-slate-400 font-mono italic">{course.duration}</span>
+                                        <span className={`px-2 py-1 rounded-md text-[10px] font-bold uppercase ${course.level === 'Beginner' ? 'bg-green-500/10 text-green-400 border border-green-500/20' :
+                                                course.level === 'Intermediate' ? 'bg-yellow-500/10 text-yellow-400 border border-yellow-500/20' :
+                                                    'bg-red-500/10 text-red-400 border border-red-500/20'
+                                            }`}>
+                                            {course.level || 'Beginner'}
+                                        </span>
                                     </td>
                                     <td className="px-6 py-4 text-center">
-                                        <span className="text-sm font-bold text-[#0df2f2]">{course.price} ฿</span>
+                                        <span className="text-sm font-bold text-[#0df2f2]">{Number(course.price).toLocaleString()} ฿</span>
                                     </td>
                                     <td className="px-6 py-4 text-right space-x-2">
                                         <button onClick={() => handleOpenModal(course)} className="p-2 text-slate-400 hover:text-white transition-colors">
@@ -238,7 +279,7 @@ export default function ManageCourses() {
 
                         <form onSubmit={handleSubmit} className="space-y-5">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                                <div className="md:col-span-2">
+                                <div>
                                     <label className="block text-xs font-bold text-slate-400 mb-2 uppercase tracking-wider">ชื่อหลักสูตร</label>
                                     <input
                                         type="text"
@@ -260,14 +301,31 @@ export default function ManageCourses() {
                                         className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#0df2f2]/50 text-sm"
                                     />
                                 </div>
+                            </div>
+
+                            <div>
+                                <label className="block text-xs font-bold text-slate-400 mb-2 uppercase tracking-wider">คำอธิบายสั้นๆ (Short Description - ประมาณ 150 ตัวอักษร)</label>
+                                <textarea
+                                    required
+                                    rows="2"
+                                    maxLength="180"
+                                    value={formData.shortDescription}
+                                    onChange={(e) => setFormData({ ...formData, shortDescription: e.target.value })}
+                                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-[#0df2f2]/50 text-sm"
+                                    placeholder="สรุปเนื้อหาสั้นๆ เพื่อแสดงในหน้าแรก..."
+                                ></textarea>
+                                <p className="text-[10px] text-right text-slate-500 mt-1">{formData.shortDescription.length}/180</p>
+                            </div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
                                 <div>
-                                    <label className="block text-xs font-bold text-slate-400 mb-2 uppercase tracking-wider">ลิงก์สมัครเรียน (URL)</label>
+                                    <label className="block text-xs font-bold text-slate-400 mb-2 uppercase tracking-wider">ราคา (บาท)</label>
                                     <input
-                                        type="url"
+                                        type="number"
                                         required
-                                        placeholder="https://..."
-                                        value={formData.link}
-                                        onChange={(e) => setFormData({ ...formData, link: e.target.value })}
+                                        placeholder="0"
+                                        value={formData.price}
+                                        onChange={(e) => setFormData({ ...formData, price: e.target.value })}
                                         className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#0df2f2]/50 text-sm font-mono"
                                     />
                                 </div>
@@ -282,30 +340,44 @@ export default function ManageCourses() {
                                     />
                                 </div>
                                 <div>
-                                    <label className="block text-xs font-bold text-slate-400 mb-2 uppercase tracking-wider">ราคา (บาท)</label>
-                                    <input
-                                        type="text"
-                                        placeholder="เช่น 3,500"
-                                        value={formData.price}
-                                        onChange={(e) => setFormData({ ...formData, price: e.target.value })}
-                                        className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#0df2f2]/50 text-sm"
-                                    />
+                                    <label className="block text-xs font-bold text-slate-400 mb-2 uppercase tracking-wider">ระดับความยาก</label>
+                                    <select
+                                        value={formData.level}
+                                        onChange={(e) => setFormData({ ...formData, level: e.target.value })}
+                                        className="w-full bg-[#050d0d] border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#0df2f2]/50 text-sm"
+                                    >
+                                        <option value="Beginner">Beginner</option>
+                                        <option value="Intermediate">Intermediate</option>
+                                        <option value="Advanced">Advanced</option>
+                                    </select>
                                 </div>
                             </div>
 
-                            <div>
-                                <label className="block text-xs font-bold text-slate-400 mb-2 uppercase tracking-wider">อัปโหลดรูปภาพหน้าปก</label>
-                                <div className="flex items-center gap-4">
-                                    <label className="flex-1 flex items-center justify-center gap-2 px-4 py-8 border-2 border-dashed border-white/10 rounded-2xl hover:border-[#0df2f2]/50 transition-colors cursor-pointer group">
-                                        <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
-                                        <span className="material-symbols-outlined text-3xl text-slate-500 group-hover:text-[#0df2f2]">cloud_upload</span>
-                                        <span className="text-slate-400 group-hover:text-white">{loadingImage ? 'กำลังประมวลผล...' : 'เลือกรูปภาพ'}</span>
-                                    </label>
-                                    {formData.image && (
-                                        <div className="w-32 h-20 rounded-xl overflow-hidden border border-white/10 shrink-0">
-                                            <img src={formData.image} alt="Preview" className="w-full h-full object-cover" />
-                                        </div>
-                                    )}
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                                <div>
+                                    <label className="block text-xs font-bold text-slate-400 mb-2 uppercase tracking-wider">ชื่อผู้สอน (Mentor)</label>
+                                    <input
+                                        type="text"
+                                        placeholder="ชื่ออาจารย์ผู้สอน"
+                                        value={formData.mentorName}
+                                        onChange={(e) => setFormData({ ...formData, mentorName: e.target.value })}
+                                        className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#0df2f2]/50 text-sm"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-xs font-bold text-slate-400 mb-2 uppercase tracking-wider">อัปโหลดรูปภาพหน้าปก</label>
+                                    <div className="flex items-center gap-4">
+                                        <label className="flex-1 flex items-center justify-center gap-2 px-4 py-3 border-2 border-dashed border-white/10 rounded-xl hover:border-[#0df2f2]/50 transition-colors cursor-pointer group">
+                                            <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
+                                            <span className="material-symbols-outlined text-xl text-slate-500 group-hover:text-[#0df2f2]">cloud_upload</span>
+                                            <span className="text-slate-400 group-hover:text-white text-xs">{loadingImage ? '...' : 'เลือกรูป'}</span>
+                                        </label>
+                                        {formData.image && (
+                                            <div className="w-16 h-12 rounded-lg overflow-hidden border border-white/10 shrink-0">
+                                                <img src={formData.image} alt="Preview" className="w-full h-full object-cover" />
+                                            </div>
+                                        )}
+                                    </div>
                                 </div>
                             </div>
 
@@ -331,17 +403,19 @@ export default function ManageCourses() {
                                 .ql-snow.ql-toolbar button.ql-active .ql-stroke { stroke: #0df2f2; }
                             `}</style>
 
-                            <div className="flex gap-4 pt-4">
+                            <div className="flex gap-4 pt-4 border-t border-white/5">
                                 <button
                                     type="submit"
-                                    className="flex-1 bg-[#0df2f2] text-[#050d0d] font-black py-4 rounded-xl hover:scale-[1.02] transition-all"
+                                    disabled={loading}
+                                    className="flex-1 bg-[#0df2f2] text-[#050d0d] font-black py-4 rounded-xl hover:shadow-[0_0_20px_rgba(13,242,242,0.4)] transition-all flex items-center justify-center gap-2 disabled:opacity-50"
                                 >
-                                    บันทึกหลักสูตร
+                                    {loading ? <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-black"></div> : <span className="material-symbols-outlined">save</span>}
+                                    บันทึกข้อมูล
                                 </button>
                                 <button
                                     type="button"
                                     onClick={() => setIsModalOpen(false)}
-                                    className="px-8 bg-white/5 text-white font-bold py-4 rounded-xl hover:bg-white/10 transition-all border border-white/10"
+                                    className="px-8 bg-white/10 text-white font-bold py-4 rounded-xl hover:bg-white/20 transition-all"
                                 >
                                     ยกเลิก
                                 </button>
