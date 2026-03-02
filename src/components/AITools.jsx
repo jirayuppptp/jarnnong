@@ -39,17 +39,23 @@ export default function AITools() {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    {tools.map((tool) => (
-                        <div key={tool.title} className="glass-card p-8 cursor-pointer transition-all group">
+                    {tools.map((tool, index) => (
+                        <div
+                            key={tool.title}
+                            className={`glass-card p-8 cursor-pointer transition-all group animate-fade-up hover-glow hover:scale-[1.02] active:scale-[0.98] ${index === 0 ? 'animate-delay-100' :
+                                    index === 1 ? 'animate-delay-200' :
+                                        'animate-delay-300'
+                                }`}
+                        >
                             <div className="w-14 h-14 bg-primary/10 rounded-xl flex items-center justify-center mb-6 text-primary group-hover:bg-primary/20 transition-colors">
-                                <span className="material-symbols-outlined text-3xl">{tool.icon}</span>
+                                <span className="material-symbols-outlined text-3xl group-hover:scale-110 transition-transform duration-300">{tool.icon}</span>
                             </div>
                             <h3 className="text-xl font-bold text-white mb-2">{tool.title}</h3>
                             <p className="text-text-secondary mb-6 text-sm leading-relaxed">{tool.desc}</p>
                             <ul className="space-y-3">
                                 {tool.items.map((item) => (
-                                    <li key={item} className="flex items-center gap-2 text-xs text-slate-300">
-                                        <span className="w-1.5 h-1.5 bg-primary rounded-full shrink-0"></span>
+                                    <li key={item} className="flex items-center gap-2 text-xs text-slate-300 group-hover:text-white transition-colors">
+                                        <span className="w-1.5 h-1.5 bg-primary rounded-full shrink-0 group-hover:shadow-[0_0_8px_rgba(0,242,255,1)] transition-all"></span>
                                         {item}
                                     </li>
                                 ))}
