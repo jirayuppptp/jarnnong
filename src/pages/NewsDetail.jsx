@@ -83,12 +83,23 @@ export default function NewsDetail() {
                     </div>
 
                     <div className="p-8 md:p-12">
-                        {/* Article Content */}
+                        {/* Article Content - Rendered as Rich Text */}
                         <div className="max-w-none">
-                            <p className="text-slate-300 text-lg leading-relaxed whitespace-pre-wrap mb-12">
-                                {article.content}
-                            </p>
+                            <div
+                                className="rich-text-content text-slate-300 text-lg leading-relaxed mb-12"
+                                dangerouslySetInnerHTML={{ __html: article.content }}
+                            />
                         </div>
+
+                        <style>{`
+                            .rich-text-content h1 { font-size: 2.25rem; font-weight: 800; color: white; margin-top: 2rem; margin-bottom: 1rem; }
+                            .rich-text-content h2 { font-size: 1.875rem; font-weight: 700; color: white; margin-top: 2rem; margin-bottom: 1rem; }
+                            .rich-text-content p { margin-bottom: 1.5rem; }
+                            .rich-text-content ul { list-style-type: disc; padding-left: 1.5rem; margin-bottom: 1.5rem; }
+                            .rich-text-content ol { list-style-type: decimal; padding-left: 1.5rem; margin-bottom: 1.5rem; }
+                            .rich-text-content blockquote { border-left: 4px solid var(--primary); padding-left: 1.5rem; font-style: italic; margin-bottom: 1.5rem; background: rgba(var(--primary-rgb), 0.1); padding: 1rem 1.5rem; border-radius: 0 12px 12px 0; }
+                            .rich-text-content a { color: #0df2f2; text-decoration: underline; }
+                        `}</style>
 
                         {/* Share & Tags */}
                         <div className="border-t border-white/10 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center gap-6">

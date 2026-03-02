@@ -55,26 +55,22 @@ export default function AINews() {
                                     </span>
                                 </div>
                             </div>
-                            <div className="p-6">
-                                <div className="flex items-center gap-4 text-slate-500 text-xs mb-4">
-                                    <span className="flex items-center gap-1">
-                                        <span className="material-symbols-outlined text-sm text-primary/60">calendar_today</span>
-                                        {item.date}
+                            <div className="p-8">
+                                <div className="flex items-center justify-between mb-4">
+                                    <span className="px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-[10px] font-bold uppercase tracking-wider">
+                                        {item.category}
                                     </span>
-                                    <span className="flex items-center gap-1">
-                                        <span className="material-symbols-outlined text-sm text-primary/60">person</span>
-                                        JarnNong AI
-                                    </span>
+                                    <span className="text-slate-500 text-xs font-mono">{item.date}</span>
                                 </div>
-                                <h3 className="text-xl font-bold text-white mb-3 group-hover:text-primary transition-colors line-clamp-2">
+                                <h2 className="text-2xl font-bold text-white mb-4 group-hover:text-primary transition-colors line-clamp-2 leading-tight">
                                     {item.title}
-                                </h3>
-                                <p className="text-text-secondary text-sm line-clamp-3 mb-6 leading-relaxed">
-                                    {item.content}
+                                </h2>
+                                <p className="text-slate-400 text-sm leading-relaxed mb-8 line-clamp-3 font-light">
+                                    {item.content.replace(/<[^>]*>?/gm, '')}
                                 </p>
-                                <div className="flex items-center gap-2 text-primary font-bold text-sm group/btn">
-                                    อ่านเพิ่มเติม
-                                    <span className="material-symbols-outlined text-sm group-hover/btn:translate-x-1 transition-transform">arrow_forward</span>
+                                <div className="flex items-center gap-2 text-primary font-bold text-xs uppercase tracking-widest group-hover:gap-3 transition-all">
+                                    อ่านรายละเอียด
+                                    <span className="material-symbols-outlined text-sm">arrow_forward</span>
                                 </div>
                             </div>
                         </NavLink>
