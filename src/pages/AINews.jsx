@@ -63,7 +63,7 @@ export default function AINews() {
                                         </span>
                                         <span className="text-slate-500 text-xs font-mono">{item.date}</span>
                                     </div>
-                                    <h2 className="text-2xl font-bold text-white mb-4 group-hover:text-primary transition-colors line-clamp-2 leading-tight">
+                                    <h2 className="text-2xl font-bold text-white mb-4 group-hover:text-primary transition-colors line-clamp-2 leading-[1.4]">
                                         {item.title}
                                     </h2>
                                     <p className="text-slate-400 text-sm leading-relaxed mb-8 line-clamp-3 font-light">

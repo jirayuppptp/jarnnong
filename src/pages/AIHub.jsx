@@ -49,7 +49,7 @@ function AIHub() {
 
                         {/* Heading */}
                         <h1
-                            className="text-6xl md:text-8xl lg:text-9xl font-black tracking-tight text-white mb-8 leading-[1.05] font-display animate-fade-up animate-delay-100"
+                            className="text-6xl md:text-8xl lg:text-9xl font-black tracking-tight text-white mb-8 leading-[1.3] font-display animate-fade-up animate-delay-100"
                             style={{ textShadow: '0 0 15px rgba(13, 242, 242, 0.4), 0 0 30px rgba(13, 242, 242, 0.2)' }}
                         >
                             อัปเกรดทักษะ AI <br />
@@ -93,7 +93,7 @@ function AIHub() {
                     <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
                         <div>
                             <h2
-                                className="text-4xl md:text-5xl font-extrabold text-white mb-6 font-display"
+                                className="text-4xl md:text-5xl font-extrabold text-white mb-6 font-display leading-[1.4]"
                                 style={{ textShadow: '0 0 15px rgba(13, 242, 242, 0.4), 0 0 30px rgba(13, 242, 242, 0.2)' }}
                             >
                                 สารบัญเครื่องมือ AI
@@ -130,7 +130,7 @@ function AIHub() {
                                                 {tool.category}
                                             </span>
                                         </div>
-                                        <h3 className="text-xl font-bold text-white mb-3 font-display">{tool.name}</h3>
+                                        <h3 className="text-xl font-bold text-white mb-3 font-display leading-[1.4]">{tool.name}</h3>
                                         <p className="text-slate-400 text-sm leading-relaxed mb-6 line-clamp-2">{tool.description}</p>
                                         <div className="flex items-center gap-2 text-[#0df2f2] text-xs font-bold uppercase tracking-wider group-hover:gap-3 transition-all">
                                             เยี่ยมชมเว็บไซต์
@@ -154,7 +154,7 @@ function AIHub() {
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
                         <div className="space-y-10 animate-fade-up">
                             <h2
-                                className="text-5xl font-black tracking-tight text-white font-display"
+                                className="text-5xl font-black tracking-tight text-white font-display leading-[1.3]"
                                 style={{ textShadow: '0 0 15px rgba(13, 242, 242, 0.4), 0 0 30px rgba(13, 242, 242, 0.2)' }}
                             >
                                 ทำไมต้อง <br />
@@ -218,7 +218,7 @@ function AIHub() {
                     >
                         <div className="absolute top-0 right-0 w-96 h-96 bg-white/20 rounded-full -mr-40 -mt-40 blur-[100px] group-hover:bg-white/30 transition-all duration-[2000ms]" />
                         <div className="relative z-10 text-center md:text-left max-w-xl animate-fade-up">
-                            <h2 className="text-4xl md:text-6xl font-black text-[#050d0d] mb-6 leading-tight font-display">
+                            <h2 className="text-4xl md:text-6xl font-black text-[#050d0d] mb-6 leading-[1.3] font-display">
                                 พร้อมเริ่มต้น <br />หรือยัง?
                             </h2>
                             <p className="text-[#050d0d]/80 text-xl md:text-2xl font-medium">

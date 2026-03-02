@@ -13,7 +13,7 @@ export default function Hero() {
                     </div>
 
                     {/* Headline */}
-                    <h1 className="text-5xl md:text-7xl font-black tracking-tighter text-white mb-6 leading-[1.1] animate-fade-up animate-delay-100">
+                    <h1 className="text-5xl md:text-7xl font-black tracking-tighter text-white mb-6 leading-[1.3] animate-fade-up animate-delay-100">
                         อัปเกรดทักษะ AI <br />
                         <span className="text-primary text-glow">ให้ก้าวทันโลก</span>
                     </h1>

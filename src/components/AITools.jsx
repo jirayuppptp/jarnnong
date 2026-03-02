@@ -25,7 +25,7 @@ export default function AITools() {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-4">
                     <div>
-                        <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+                        <h2 className="text-3xl md:text-4xl font-bold text-white mb-4 leading-[1.4]">
                             สารบัญเครื่องมือ AI
                         </h2>
                         <p className="text-text-secondary">
@@ -43,8 +43,8 @@ export default function AITools() {
                         <div
                             key={tool.title}
                             className={`glass-card p-8 cursor-pointer transition-all group animate-fade-up hover-glow hover:scale-[1.02] active:scale-[0.98] ${index === 0 ? 'animate-delay-100' :
-                                    index === 1 ? 'animate-delay-200' :
-                                        'animate-delay-300'
+                                index === 1 ? 'animate-delay-200' :
+                                    'animate-delay-300'
                                 }`}
                         >
                             <div className="w-14 h-14 bg-primary/10 rounded-xl flex items-center justify-center mb-6 text-primary group-hover:bg-primary/20 transition-colors">

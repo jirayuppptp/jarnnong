@@ -23,15 +23,15 @@ export default function WhyUs() {
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
                     {/* Left: text */}
                     <div className="space-y-8 animate-fade-up">
-                        <h2 className="text-4xl font-black tracking-tight text-white animate-fade-up">
+                        <h2 className="text-4xl font-black tracking-tight text-white animate-fade-up leading-[1.3]">
                             ทำไมต้อง <br />
                             <span className="text-primary text-glow">AI Knowledge Hub?</span>
                         </h2>
                         <div className="space-y-6">
                             {features.map((f, index) => (
                                 <div key={f.title} className={`flex gap-4 animate-fade-up ${index === 0 ? 'animate-delay-100' :
-                                        index === 1 ? 'animate-delay-200' :
-                                            'animate-delay-300'
+                                    index === 1 ? 'animate-delay-200' :
+                                        'animate-delay-300'
                                     }`}>
                                     <div className="shrink-0 w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center text-primary border border-primary/20 group hover:bg-primary hover:text-white transition-all duration-300">
                                         <span className="material-symbols-outlined">{f.icon}</span>

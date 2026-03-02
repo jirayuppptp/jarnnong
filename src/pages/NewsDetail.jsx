@@ -57,7 +57,7 @@ export default function NewsDetail() {
                         {article.category}
                     </div>
 
-                    <h1 className="text-4xl md:text-6xl font-black text-white mb-8 leading-[1.15] animate-fade-up">
+                    <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-white mb-8 !leading-[1.4] animate-fade-up animate-delay-100">
                         {article.title}
                     </h1>
 

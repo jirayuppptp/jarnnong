@@ -13,7 +13,7 @@ export default function CTA() {
                     <div className="absolute bottom-0 left-1/3 w-40 h-40 bg-white/10 rounded-full blur-2xl pointer-events-none"></div>
 
                     <div className="relative z-10 text-center md:text-left animate-fade-up">
-                        <h2 className="text-3xl md:text-4xl font-black text-[#05070A] mb-4">
+                        <h2 className="text-3xl md:text-4xl font-black text-[#05070A] mb-4 leading-[1.4]">
                             พร้อมเริ่มต้นหรือยัง?
                         </h2>
                         <p className="text-[#05070A]/80 text-lg font-medium">
