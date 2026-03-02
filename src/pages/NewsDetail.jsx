@@ -83,58 +83,11 @@ export default function NewsDetail() {
                     </div>
 
                     <div className="p-8 md:p-12">
-                        {/* Summary Box */}
-                        <div className="bg-primary/5 border-l-4 border-primary p-6 mb-10 rounded-r-xl">
-                            <p className="text-lg italic text-slate-300 leading-relaxed font-light">
-                                "{article.content}"
-                            </p>
-                        </div>
-
-                        {/* Article Body */}
+                        {/* Article Content */}
                         <div className="max-w-none">
-                            <p className="text-slate-300 text-lg leading-relaxed mb-8">
-                                เทคโนโลยีปัญญาประดิษฐ์ (AI) กำลังก้าวหน้าไปอย่างรวดเร็ว และ {article.title} เป็นหนึ่งในก้าวสำคัญของวงการนี้ โดยการพัฒนาที่เกิดขึ้นล่าสุดแสดงให้เห็นว่าเรากำลังเข้าสู่ยุคที่เครื่องจักรสามารถเรียนรู้และสร้างสรรค์ผลงานที่ซับซ้อนได้อย่างน่าทึ่ง
+                            <p className="text-slate-300 text-lg leading-relaxed whitespace-pre-wrap mb-12">
+                                {article.content}
                             </p>
-
-                            <h2 className="text-2xl font-bold text-white mt-12 mb-6 flex items-center gap-3">
-                                <span className="w-8 h-[2px] bg-primary"></span>
-                                จุดเด่นที่น่าสนใจ
-                            </h2>
-                            <p className="text-slate-300 text-lg leading-relaxed mb-8">
-                                ความสามารถที่เพิ่มขึ้นนี้ไม่ใช่แค่เรื่องของพลังการประมวลผล แต่เป็นเรื่องของสถาปัตยกรรมโมเดลแนวใหม่ที่เลียนแบบโครงข่ายประสาทของมนุษย์ได้ใกล้เคียงมากขึ้น ทำให้ผลลัพธ์ที่ได้มีความแม่นยำและสมจริงอย่างที่ไม่เคยมีมาก่อน
-                            </p>
-
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 my-12">
-                                <div className="p-8 rounded-2xl bg-gradient-to-br from-white/5 to-transparent border border-white/10 hover:border-primary/30 transition-colors group/item">
-                                    <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-6 group-hover/item:scale-110 transition-transform">
-                                        <span className="material-symbols-outlined text-primary">bolt</span>
-                                    </div>
-                                    <h3 className="text-xl font-bold text-white mb-3">ประสิทธิภาพสูง</h3>
-                                    <p className="text-slate-400 leading-relaxed">รองรับการทำงานที่มีขนาดใหญ่และซับซ้อนได้อย่างรวดเร็วและเสถียรยิ่งขึ้น</p>
-                                </div>
-                                <div className="p-8 rounded-2xl bg-gradient-to-br from-white/5 to-transparent border border-white/10 hover:border-primary/30 transition-colors group/item">
-                                    <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-6 group-hover/item:scale-110 transition-transform">
-                                        <span className="material-symbols-outlined text-primary">analytics</span>
-                                    </div>
-                                    <h3 className="text-xl font-bold text-white mb-3">ความแม่นยำ</h3>
-                                    <p className="text-slate-400 leading-relaxed">ผลการทดสอบเบื้องต้นทำได้ดีกว่ารุ่นก่อนหน้าอย่างชัดเจนในทุกมิติ</p>
-                                </div>
-                            </div>
-
-                            <h2 className="text-2xl font-bold text-white mt-12 mb-6 flex items-center gap-3">
-                                <span className="w-8 h-[2px] bg-primary"></span>
-                                ผลกระทบต่ออุตสาหกรรม
-                            </h2>
-                            <p className="text-slate-300 text-lg leading-relaxed mb-8">
-                                ผู้เชี่ยวชาญคาดการณ์ว่านวัตกรรมนี้จะเปลี่ยนโฉมการทำงานในอนาคต ไม่ว่าจะเป็นเรื่องของการลดต้นทุน การเพิ่มประสิทธิภาพผลิตผล หรือแม้แต่การสร้างโอกาสใหม่ๆ ทางธุรกิจที่ปัจจุบันเรายังจินตนาการไปไม่ถึง
-                            </p>
-
-                            <blockquote className="relative border-l-4 border-primary px-8 py-6 my-12 bg-primary/5 rounded-r-2xl">
-                                <span className="absolute -top-4 left-4 text-6xl text-primary/20 font-serif">"</span>
-                                <p className="text-xl font-medium text-white italic leading-relaxed">
-                                    นี่คือจุดเปลี่ยนสำคัญที่จะทำให้ AI เข้าถึงทุกคนได้ง่ายขึ้นและมีประโยชน์มากขึ้นในชีวิตประจำวันอย่างแท้จริง
-                                </p>
-                            </blockquote>
                         </div>
 
                         {/* Share & Tags */}
