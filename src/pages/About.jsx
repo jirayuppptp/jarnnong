@@ -1,14 +1,12 @@
 import AboutHero from '../components/AboutHero'
-import Hero from '../components/Hero'
-import AITools from '../components/AITools'
+import CourseSection from '../components/CourseSection'
 import CTA from '../components/CTA'
 
 export default function About() {
     return (
         <>
             <AboutHero />
-            <Hero />
-            <AITools />
+            <CourseSection />
             <CTA />
         </>
     )
