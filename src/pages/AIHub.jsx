@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { Helmet } from 'react-helmet-async';
 import { db } from '../firebase';
 import { collection, onSnapshot, query, orderBy } from 'firebase/firestore';
 
@@ -22,12 +21,10 @@ export default function AIHub() {
 
     return (
         <div className="min-h-screen bg-[#050d0d] text-slate-300 font-sans selection:bg-[#0df2f2] selection:text-[#050d0d]">
-            <Helmet>
-                <title>รวมเครื่องมือ AI (AI Tools Hub) | JarnNong.com</title>
-                <meta name="description" content="รวบรวมเครื่องมือ AI ที่ทันสมัยและดีที่สุดสำหรับการทำงานในยุคถัดไป เพื่อเพิ่มประสิทธิภาพและลดเวลาในการทำงานของคุณ" />
-                <meta property="og:title" content="รวมเครื่องมือ AI (AI Tools Hub) | JarnNong.com" />
-                <meta property="og:description" content="รวบรวมเครื่องมือ AI ที่ทันสมัยและดีที่สุดสำหรับการทำงานในยุคถัดไป เพื่อเพิ่มประสิทธิภาพและลดเวลาในการทำงานของคุณ" />
-            </Helmet>
+            <title>รวมเครื่องมือ AI (AI Tools Hub) | JarnNong.com</title>
+            <meta name="description" content="รวบรวมเครื่องมือ AI ที่ทันสมัยและดีที่สุดสำหรับการทำงานในยุคถัดไป เพื่อเพิ่มประสิทธิภาพและลดเวลาในการทำงานของคุณ" />
+            <meta property="og:title" content="รวมเครื่องมือ AI (AI Tools Hub) | JarnNong.com" />
+            <meta property="og:description" content="รวบรวมเครื่องมือ AI ที่ทันสมัยและดีที่สุดสำหรับการทำงานในยุคถัดไป เพื่อเพิ่มประสิทธิภาพและลดเวลาในการทำงานของคุณ" />
 
             {/* Hero Section */}
             <section className="relative pt-32 pb-20 overflow-hidden">
