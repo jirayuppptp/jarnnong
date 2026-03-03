@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
-import { HelmetProvider } from 'react-helmet-async';
+import { HelmetProvider, Helmet } from 'react-helmet-async';
 import './index.css'
 import Header from './components/Header'
 import Footer from './components/Footer'
@@ -69,6 +69,10 @@ function AppContent() {
 function App() {
   return (
     <HelmetProvider>
+      <Helmet>
+        <title>จารย์โหน่ง AI | JarnNong.com — AI Knowledge Hub สำหรับคนไทย</title>
+        <meta name="description" content="ศูนย์รวมความรู้และเครื่องมือ AI สำหรับคนไทย เพื่อก้าวสู่อนาคตที่เหนือกว่าด้วยเทคโนโลยีอัจฉริยะ" />
+      </Helmet>
       <AuthProvider>
         <BrowserRouter>
           <AppContent />
