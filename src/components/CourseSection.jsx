@@ -52,9 +52,10 @@ export default function CourseSection() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                     {courses.map((course, idx) => (
-                        <div
+                        <Link
+                            to={`/course-detail/${course.id}`}
                             key={course.id}
-                            className="group relative bg-card-bg border border-white/5 rounded-3xl p-4 transition-all duration-500 hover:border-primary/30 hover:-translate-y-2 flex flex-col"
+                            className="group relative bg-card-bg border border-white/5 rounded-3xl p-4 transition-all duration-500 hover:border-primary/30 hover:-translate-y-2 flex flex-col block"
                             data-aos="fade-up"
                             data-aos-delay={idx * 100}
                         >
@@ -72,11 +73,11 @@ export default function CourseSection() {
                             </div>
 
                             <div className="px-4 pb-4 flex flex-col flex-1">
-                                <h3 className="text-xl font-bold text-white mb-4 line-clamp-2 leading-[1.4] group-hover:text-primary transition-colors">
+                                <h3 className="text-xl font-bold text-white mb-4 leading-[1.4] group-hover:text-primary transition-colors">
                                     {course.title}
                                 </h3>
-                                <p className="text-text-secondary text-sm leading-relaxed mb-6 line-clamp-2 font-light h-[2.5rem]">
-                                    {course.shortDescription || (course.description ? stripHtml(course.description).substring(0, 150) + '...' : 'ไม่มีคำอธิบาย')}
+                                <p className="text-text-secondary text-sm leading-relaxed mb-6 font-light">
+                                    {course.shortDescription || (course.description ? stripHtml(course.description) : 'ไม่มีคำอธิบาย')}
                                 </p>
                                 <div className="mt-auto flex items-center justify-between">
                                     <span className="text-primary font-mono font-bold">{course.price} ฿</span>
@@ -86,7 +87,7 @@ export default function CourseSection() {
                                     </span>
                                 </div>
                             </div>
-                        </div>
+                        </Link>
                     ))}
                 </div>
             </div>
