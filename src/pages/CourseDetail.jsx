@@ -10,6 +10,10 @@ export default function CourseDetail() {
     const [course, setCourse] = useState(null);
     const [loading, setLoading] = useState(true);
 
+    const handleDownloadPDF = () => {
+        window.print();
+    };
+
     useEffect(() => {
         window.scrollTo(0, 0);
 
@@ -146,6 +150,33 @@ export default function CourseDetail() {
                                 .quill-editor-content ol { list-style-type: decimal; padding-left: 2em; margin-bottom: 1em; }
                                 .quill-editor-content strong { color: white; font-weight: 700; }
                                 .quill-editor-content em { font-style: italic; color: #0df2f2; }
+
+                                @media print {
+                                    @page { size: A4; margin: 2cm; }
+                                    header, footer, .btn-primary, .neon-border, .circuit-pattern, .mesh-gradient, .glass-card::before, .glass-card::after, .material-symbols-outlined:not(.print-show), button, nav { display: none !important; }
+                                    body { background: white !important; color: black !important; }
+                                    .min-h-screen { background: white !important; padding: 0 !important; }
+                                    .glass-card { 
+                                        background: transparent !important; 
+                                        border: 1px solid #eee !important; 
+                                        box-shadow: none !important; 
+                                        color: black !important; 
+                                        padding: 0 !important;
+                                        margin-bottom: 2rem !important;
+                                    }
+                                    .text-white, .text-slate-300, .text-slate-400, .text-text-secondary { color: black !important; }
+                                    .quill-editor-content h1, .quill-editor-content h2, .quill-editor-content h3, .quill-editor-content strong { color: black !important; }
+                                    .text-primary, .material-symbols-outlined { color: #000 !important; }
+                                    .bg-primary/10 { background: #f0f0f0 !important; }
+                                    h1 { border-bottom: 2px solid #333; padding-bottom: 0.5rem; margin-bottom: 2rem !important; font-size: 24pt !important; }
+                                    h2 { margin-top: 2rem !important; border-bottom: 1px solid #eee; padding-bottom: 0.5rem; font-size: 18pt !important; }
+                                    .lg\\:grid-cols-3 { display: block !important; }
+                                    .lg\\:col-span-2 { width: 100% !important; }
+                                    .animate-fade-up, .animate-float, .animate-fade-in { animation: none !important; opacity: 1 !important; transform: none !important; }
+                                    .print-header { display: block !important; margin-bottom: 3rem; text-align: center; border-bottom: 3px solid #000; padding-bottom: 1rem; }
+                                    .print-footer { display: block !important; position: fixed; bottom: 0; width: 100%; text-align: center; font-size: 8pt; color: #999; border-top: 1px solid #eee; padding-top: 0.5rem; }
+                                }
+                                .print-header, .print-footer { display: none; }
                             `}</style>
                         </div>
 
@@ -214,6 +245,13 @@ export default function CourseDetail() {
                             <button className="btn-primary w-full py-5 font-black text-lg hover-glow mb-6 active:scale-95 transition-all">
                                 ลงทะเบียนตอนนี้
                             </button>
+                            <button
+                                onClick={handleDownloadPDF}
+                                className="w-full py-4 px-6 bg-white/5 border border-white/10 rounded-2xl text-white font-bold text-sm flex items-center justify-center gap-3 hover:bg-white/10 transition-all mb-6 group"
+                            >
+                                <span className="material-symbols-outlined text-primary group-hover:scale-110 transition-transform">download_for_offline</span>
+                                ดาวน์โหลดโครงสร้างหลักสูตร (PDF)
+                            </button>
                             <div className="flex items-center justify-center gap-2 text-slate-500 text-[10px] font-bold uppercase tracking-widest">
                                 <span className="material-symbols-outlined text-sm">lock</span>
                                 Secure Payment Guaranteed
@@ -222,6 +260,16 @@ export default function CourseDetail() {
                     </div>
                 </div>
             </section>
+
+            {/* Hidden Print Header/Footer */}
+            <div className="print-header">
+                <div style={{ fontSize: '28pt', fontWeight: '900', letterSpacing: '-0.02em', color: '#000' }}>JarnNong.com</div>
+                <div style={{ fontSize: '10pt', fontWeight: '700', color: '#666', textTransform: 'uppercase', letterSpacing: '0.2em' }}>AI Knowledge Hub for Thailand</div>
+            </div>
+
+            <div className="print-footer">
+                @ 2026 JarnNong.com — คลังความรู้ด้าน AI สำหรับคนไทย | เอกสารโครงสร้างหลักสูตรอย่างเป็นทางการ
+            </div>
         </div>
     );
 }
