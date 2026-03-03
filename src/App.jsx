@@ -69,10 +69,6 @@ function AppContent() {
 function App() {
   return (
     <HelmetProvider>
-      <Helmet>
-        <title>จารย์โหน่ง AI | JarnNong.com — AI Knowledge Hub สำหรับคนไทย</title>
-        <meta name="description" content="ศูนย์รวมความรู้และเครื่องมือ AI สำหรับคนไทย เพื่อก้าวสู่อนาคตที่เหนือกว่าด้วยเทคโนโลยีอัจฉริยะ" />
-      </Helmet>
       <AuthProvider>
         <BrowserRouter>
           <AppContent />

@@ -9,7 +9,7 @@ export default function Home() {
         <>
             <Helmet>
                 <title>JarnNong.com | ยกระดับทักษะของคุณด้วย AI</title>
-                <meta name="description" content="เรียนรู้การประยุกต์ใช้ AI ในการทำงานและธุรกิจกับผู้เฉี่ยวชาญ คอร์สเรียน AI ที่ดีที่สุดสำหรับทุกคน" />
+                <meta name="description" content="เรียนรู้การประยุกต์ใช้ AI ในการทำงานและธุรกิจกับผู้เชี่ยวชาญ คอร์สเรียน AI ที่ดีที่สุดสำหรับทุกคน" />
                 <meta property="og:title" content="JarnNong.com | ยกระดับทักษะของคุณด้วย AI" />
                 <meta property="og:description" content="เรียนรู้การประยุกต์ใช้ AI ในการทำงานและธุรกิจกับผู้เชี่ยวชาญ คอร์สเรียน AI ที่ดีที่สุดสำหรับทุกคน" />
             </Helmet>
