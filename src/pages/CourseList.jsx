@@ -4,7 +4,7 @@ import { Helmet } from 'react-helmet-async';
 import { db } from '../firebase';
 import { collection, onSnapshot, query } from 'firebase/firestore';
 
-export default function Courses() {
+export default function CourseList() {
     console.log("DEBUG: Courses component is rendering");
     const [courses, setCourses] = useState([]);
     const [loading, setLoading] = useState(true);
