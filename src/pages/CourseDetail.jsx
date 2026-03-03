@@ -143,6 +143,11 @@ export default function CourseDetail() {
                                     dangerouslySetInnerHTML={{ __html: course.description }}
                                 />
                                 <style>{`
+                                .quill-editor-content {
+                                    word-break: break-word;
+                                    overflow-wrap: anywhere;
+                                    overflow-x: hidden;
+                                }
                                 .quill-editor-content h1, .quill-editor-content h2, .quill-editor-content h3 { color: white; font-weight: 800; margin-top: 1.5em; margin-bottom: 0.5em; font-family: 'Kanit', sans-serif; }
                                 .quill-editor-content h1 { font-size: 2rem; }
                                 .quill-editor-content h2 { font-size: 1.5rem; }
