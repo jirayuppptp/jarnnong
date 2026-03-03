@@ -114,12 +114,12 @@ export default function CourseList() {
                                         </span>
                                     </div>
 
-                                    <h3 className="text-2xl font-black text-white mb-4 line-clamp-2 leading-[1.4] font-display group-hover:text-[#0df2f2] transition-colors">
+                                    <h3 className="text-2xl font-black text-white mb-4 leading-[1.4] font-display group-hover:text-[#0df2f2] transition-colors">
                                         {course.title}
                                     </h3>
 
-                                    <p className="text-slate-400 text-sm leading-relaxed mb-8 line-clamp-3 font-light h-[4.5rem]">
-                                        {course.shortDescription || (course.description ? stripHtml(course.description).substring(0, 150) + '...' : 'ไม่มีคำอธิบายส้นๆ')}
+                                    <p className="text-slate-400 text-sm leading-relaxed mb-8 font-light">
+                                        {course.shortDescription || (course.description ? stripHtml(course.description) : 'ไม่มีคำอธิบาย')}
                                     </p>
 
                                     <div className="mt-auto pt-6 border-t border-white/5 flex items-center justify-between">
