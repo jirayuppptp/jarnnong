@@ -62,11 +62,11 @@ export default function CourseDetail() {
     return (
         <div className="min-h-screen bg-[#05070A] pb-32 font-sans">
             <Helmet>
-                <title>{course.title} | JarnNong.com</title>
-                <meta name="description" content={course.shortDescription || course.title} />
-                <meta property="og:title" content={`${course.title} | JarnNong.com`} />
-                <meta property="og:description" content={course.shortDescription || course.title} />
-                {course.image && <meta property="og:image" content={course.image} />}
+                <title>{course?.title || 'Course Details'} | JarnNong.com</title>
+                <meta name="description" content={course?.shortDescription || course?.title || 'รายละเอียดหลักสูตร'} />
+                <meta property="og:title" content={`${course?.title || 'Details'} | JarnNong.com`} />
+                <meta property="og:description" content={course?.shortDescription || course?.title || 'รายละเอียดหลักสูตร'} />
+                {course?.image && <meta property="og:image" content={course.image} />}
             </Helmet>
 
             {/* Hero Section */}

@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { db } from '../firebase';
-import { collection, onSnapshot, query, orderBy } from 'firebase/firestore';
+import { collection, onSnapshot, query } from 'firebase/firestore';
 
 export default function Courses() {
     const [courses, setCourses] = useState([]);
@@ -11,15 +11,20 @@ export default function Courses() {
     useEffect(() => {
         const q = query(collection(db, 'courses'));
         const unsubscribe = onSnapshot(q, (snapshot) => {
-            const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-            // Sort in memory to avoid missing field exclusion
-            const sortedData = data.sort((a, b) => {
-                const dateA = a.createdAt || '';
-                const dateB = b.createdAt || '';
-                return dateB.localeCompare(dateA);
-            });
-            setCourses(sortedData);
-            setLoading(false);
+            try {
+                const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                // Sort in memory safely
+                const sortedData = [...data].sort((a, b) => {
+                    const dateA = a.createdAt?.seconds || 0;
+                    const dateB = b.createdAt?.seconds || 0;
+                    return dateB - dateA;
+                });
+                setCourses(sortedData);
+            } catch (error) {
+                console.error("Error processing courses data:", error);
+            } finally {
+                setLoading(false);
+            }
         }, (error) => {
             console.error("Error fetching courses:", error);
             setLoading(false);
@@ -27,6 +32,11 @@ export default function Courses() {
 
         return () => unsubscribe();
     }, []);
+
+    const stripHtml = (html) => {
+        if (!html || typeof html !== 'string') return '';
+        return html.replace(/<[^>]*>?/gm, '');
+    };
 
     return (
         <div className="min-h-screen bg-[#050d0d] text-slate-300 font-sans selection:bg-[#0df2f2] selection:text-[#050d0d]">
@@ -89,7 +99,7 @@ export default function Courses() {
                                         </span>
                                     </div>
                                     <div className="absolute bottom-4 right-4 bg-black/60 backdrop-blur-md px-3 py-1 rounded-lg border border-white/10">
-                                        <p className="text-[#0df2f2] font-black text-sm">฿{Number(course.price).toLocaleString()}</p>
+                                        <p className="text-[#0df2f2] font-black text-sm">฿{Number(course.price || 0).toLocaleString()}</p>
                                     </div>
                                 </div>
 
@@ -111,7 +121,7 @@ export default function Courses() {
                                     </h3>
 
                                     <p className="text-slate-400 text-sm leading-relaxed mb-8 line-clamp-3 font-light h-[4.5rem]">
-                                        {course.shortDescription || (course.description ? course.description.replace(/<[^>]*>?/gm, '').substring(0, 150) + '...' : 'ไม่มีคำอธิบายสั้นๆ')}
+                                        {course.shortDescription || (course.description ? stripHtml(course.description).substring(0, 150) + '...' : 'ไม่มีคำอธิบายส้นๆ')}
                                     </p>
 
                                     <div className="mt-auto pt-6 border-t border-white/5 flex items-center justify-between">

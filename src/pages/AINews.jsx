@@ -21,6 +21,11 @@ export default function AINews() {
         return () => unsubscribe();
     }, [])
 
+    const stripHtml = (html) => {
+        if (!html || typeof html !== 'string') return '';
+        return html.replace(/<[^>]*>?/gm, '');
+    };
+
     return (
         <div className="min-h-screen bg-[#05070A] pb-32 selection:bg-[#0df2f2] selection:text-[#050d0d]">
             <Helmet>

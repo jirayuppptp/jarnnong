@@ -64,11 +64,11 @@ export default function NewsDetail() {
     return (
         <div className="min-h-screen bg-[#05070A] pb-32 selection:bg-[#0df2f2] selection:text-[#050d0d]">
             <Helmet>
-                <title>{article.title} | AI News by JarnNong</title>
-                <meta name="description" content={article.content ? article.content.replace(/<[^>]*>?/gm, '').substring(0, 150) + '...' : 'ข่าวสาร AI ล่าสุดจาก Jarnnong.com'} />
-                <meta property="og:title" content={`${article.title} | AI News by JarnNong`} />
-                <meta property="og:description" content={article.content ? article.content.replace(/<[^>]*>?/gm, '').substring(0, 150) + '...' : 'ข่าวสาร AI ล่าสุดจาก Jarnnong.com'} />
-                {article.image && <meta property="og:image" content={article.image} />}
+                <title>{article?.title || 'Loading Article...'} | AI News by JarnNong</title>
+                <meta name="description" content={article?.content ? stripHtml(article.content).substring(0, 150) + '...' : 'ข่าวสาร AI ล่าสุดจาก Jarnnong.com'} />
+                <meta property="og:title" content={`${article?.title || 'AI News'} | AI News by JarnNong`} />
+                <meta property="og:description" content={article?.content ? stripHtml(article.content).substring(0, 150) + '...' : 'ข่าวสาร AI ล่าสุดจาก Jarnnong.com'} />
+                {article?.image && <meta property="og:image" content={article.image} />}
             </Helmet>
 
             {/* Post Hero Section */}
