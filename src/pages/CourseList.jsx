@@ -3,6 +3,7 @@ import { NavLink } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { db } from '../firebase';
 import { collection, onSnapshot, query } from 'firebase/firestore';
+import { stripHtml } from '../utils/textHelper';
 
 export default function CourseList() {
     console.log("DEBUG: Courses component is rendering");
@@ -34,10 +35,6 @@ export default function CourseList() {
         return () => unsubscribe();
     }, []);
 
-    const stripHtml = (html) => {
-        if (!html || typeof html !== 'string') return '';
-        return html.replace(/<[^>]*>?/gm, '');
-    };
 
     return (
         <div className="min-h-screen bg-[#050d0d] text-slate-300 font-sans selection:bg-[#0df2f2] selection:text-[#050d0d]">

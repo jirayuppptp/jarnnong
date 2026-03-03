@@ -1,7 +1,7 @@
 const stats = [
-    { value: '10+ ปี', label: 'ประสบการณ์' },
-    { value: '50,000+', label: 'ผู้ติดตาม' },
-    { value: '5,000+', label: 'นักเรียน' },
+    { value: '30+ ปี', label: 'ประสบการณ์ด้านไอที' },
+    { value: 'Meta Certified', label: 'Digital Marketing' },
+    { value: '1,000+', label: 'นักเรียน' },
 ]
 
 export default function AboutHero() {

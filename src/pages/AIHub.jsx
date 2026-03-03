@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { db } from '../firebase';
 import { collection, onSnapshot, query, orderBy } from 'firebase/firestore';
+import { stripHtml } from '../utils/textHelper';
 
 export default function AIHub() {
     const [tools, setTools] = useState([]);
@@ -20,10 +21,6 @@ export default function AIHub() {
         return () => unsubscribe();
     }, []);
 
-    const stripHtml = (html) => {
-        if (!html || typeof html !== 'string') return '';
-        return html.replace(/<[^>]*>?/gm, '');
-    };
 
     return (
         <div className="min-h-screen bg-[#050d0d] text-slate-300 font-sans selection:bg-[#0df2f2] selection:text-[#050d0d]">

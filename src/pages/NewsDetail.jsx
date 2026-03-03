@@ -3,6 +3,7 @@ import { useParams, NavLink, useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { db } from '../firebase'
 import { doc, getDoc, updateDoc, increment, collection, query, limit, getDocs } from 'firebase/firestore'
+import { stripHtml } from '../utils/textHelper'
 
 export default function NewsDetail() {
     const { id } = useParams()
