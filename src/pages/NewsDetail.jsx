@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react'
-import { useParams, NavLink, useNavigate } from 'react-router-dom'
+import { useParams, NavLink, useNavigate } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import { db } from '../firebase'
 import { doc, getDoc, updateDoc, increment, collection, query, limit, getDocs } from 'firebase/firestore'
 
@@ -62,6 +62,14 @@ export default function NewsDetail() {
 
     return (
         <div className="min-h-screen bg-[#05070A] pb-32 selection:bg-[#0df2f2] selection:text-[#050d0d]">
+            <Helmet>
+                <title>{article.title} | AI News by JarnNong</title>
+                <meta name="description" content={article.content ? article.content.replace(/<[^>]*>?/gm, '').substring(0, 150) + '...' : 'ข่าวสาร AI ล่าสุดจาก Jarnnong.com'} />
+                <meta property="og:title" content={`${article.title} | AI News by JarnNong`} />
+                <meta property="og:description" content={article.content ? article.content.replace(/<[^>]*>?/gm, '').substring(0, 150) + '...' : 'ข่าวสาร AI ล่าสุดจาก Jarnnong.com'} />
+                {article.image && <meta property="og:image" content={article.image} />}
+            </Helmet>
+
             {/* Post Hero Section */}
             <section className="relative pt-32 pb-20 overflow-hidden mesh-gradient">
                 <div className="absolute inset-0 circuit-pattern opacity-10"></div>

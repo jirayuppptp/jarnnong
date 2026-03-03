@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { NavLink, useParams, useNavigate } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import { db } from '../firebase';
 import { doc, getDoc } from 'firebase/firestore';
 
@@ -60,6 +61,14 @@ export default function CourseDetail() {
 
     return (
         <div className="min-h-screen bg-[#05070A] pb-32 font-sans">
+            <Helmet>
+                <title>{course.title} | JarnNong.com</title>
+                <meta name="description" content={course.shortDescription || course.title} />
+                <meta property="og:title" content={`${course.title} | JarnNong.com`} />
+                <meta property="og:description" content={course.shortDescription || course.title} />
+                {course.image && <meta property="og:image" content={course.image} />}
+            </Helmet>
+
             {/* Hero Section */}
             <section className="relative pt-32 pb-20 overflow-hidden mesh-gradient">
                 <div className="absolute inset-0 circuit-pattern opacity-20"></div>
