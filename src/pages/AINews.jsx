@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import { db } from '../firebase'
 import { collection, onSnapshot, query, orderBy } from 'firebase/firestore'
 
@@ -22,10 +23,12 @@ export default function AINews() {
 
     return (
         <div className="min-h-screen bg-[#05070A] pb-32 selection:bg-[#0df2f2] selection:text-[#050d0d]">
-            <title>ข่าวสารวงการ AI ล่าสุด | JarnNong.com</title>
-            <meta name="description" content="เกาะติดทุกความเคลื่อนไหว เทคโนโลยีอัจฉริยะ และนวัตกรรมเปลี่ยนโลกที่เราคัดสรรมาให้คุณ" />
-            <meta property="og:title" content="ข่าวสารวงการ AI ล่าสุด | JarnNong.com" />
-            <meta property="og:description" content="เกาะติดทุกความเคลื่อนไหว เทคโนโลยีอัจฉริยะ และนวัตกรรมเปลี่ยนโลกที่เราคัดสรรมาให้คุณ" />
+            <Helmet>
+                <title>ข่าวสารวงการ AI ล่าสุด | JarnNong.com</title>
+                <meta name="description" content="เกาะติดทุกความเคลื่อนไหว เทคโนโลยีอัจฉริยะ และนวัตกรรมเปลี่ยนโลกที่เราคัดสรรมาให้คุณ" />
+                <meta property="og:title" content="ข่าวสารวงการ AI ล่าสุด | JarnNong.com" />
+                <meta property="og:description" content="เกาะติดทุกความเคลื่อนไหว เทคโนโลยีอัจฉริยะ และนวัตกรรมเปลี่ยนโลกที่เราคัดสรรมาให้คุณ" />
+            </Helmet>
 
             {/* Hero Section */}
             <section className="relative pt-32 pb-20 overflow-hidden mesh-gradient">
