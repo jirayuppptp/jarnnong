@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { Link } from 'react-router-dom'
 import { db } from '../firebase'
 import { collection, onSnapshot, query, orderBy } from 'firebase/firestore'
 
@@ -70,39 +71,26 @@ export default function AIDictionary() {
                     filteredTerms.map((item, index) => {
                         const isExpanded = expandedId === item.id
                         return (
-                            <div
+                            <Link
+                                to={`/ai-terms/${item.id}`}
                                 key={item.id}
-                                className={`glass-card overflow-hidden transition-all duration-500 animate-fade-up ${isExpanded ? 'border-primary/40 bg-white/[0.04]' : 'hover:bg-white/[0.02]'
-                                    }`}
+                                className={`block glass-card overflow-hidden transition-all duration-500 animate-fade-up hover:bg-white/[0.02] hover:border-primary/40`}
                                 style={{ animationDelay: `${index * 50}ms` }}
                             >
-                                <button
-                                    onClick={() => toggleExpand(item.id)}
-                                    className="w-full text-left p-6 md:p-8 flex items-center justify-between group"
-                                >
+                                <div className="w-full text-left p-6 md:p-8 flex items-center justify-between group">
                                     <div className="flex flex-col md:flex-row md:items-center gap-4">
-                                        <h3 className={`text-2xl font-bold transition-all ${isExpanded ? 'text-primary' : 'text-white group-hover:text-primary'
-                                            }`}>{item.term}</h3>
+                                        <h3 className={`text-2xl font-bold transition-all text-white group-hover:text-primary`}>
+                                            {item.term}
+                                        </h3>
                                         <span className="inline-block px-3 py-1 rounded-full bg-white/5 text-slate-500 text-[10px] font-bold uppercase tracking-widest border border-white/5 w-fit">
                                             {item.category}
                                         </span>
                                     </div>
-                                    <span className={`material-symbols-outlined text-primary transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''
-                                        }`}>
-                                        keyboard_arrow_down
+                                    <span className={`material-symbols-outlined text-primary transition-transform duration-300 group-hover:translate-x-1`}>
+                                        arrow_forward
                                     </span>
-                                </button>
-
-                                <div className={`transition-all duration-500 ease-in-out ${isExpanded ? 'max-h-[1000px] opacity-100' : 'max-h-0 opacity-0 pointer-events-none'
-                                    }`}>
-                                    <div className="px-6 md:px-8 pb-8 pt-0 border-t border-white/5">
-                                        <div
-                                            className="rich-text-content text-slate-300 text-lg leading-relaxed mt-6 ql-editor !p-0"
-                                            dangerouslySetInnerHTML={{ __html: item.definition }}
-                                        />
-                                    </div>
                                 </div>
-                            </div>
+                            </Link>
                         )
                     })
                 ) : (

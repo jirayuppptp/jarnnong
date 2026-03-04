@@ -11,6 +11,7 @@ import AIHub from './pages/AIHub'
 import AINews from './pages/AINews'
 import NewsDetail from './pages/NewsDetail'
 import AIDictionary from './pages/AIDictionary'
+import AITermDetail from './pages/AITermDetail'
 import Login from './pages/admin/Login'
 import AdminDashboard from './pages/admin/AdminDashboard'
 import ManageAITools from './pages/admin/ManageAITools'
@@ -20,6 +21,7 @@ import ManageDictionary from './pages/admin/ManageDictionary'
 import AdminLayout from './components/AdminLayout'
 import { AuthProvider } from './context/AuthContext'
 import ProtectedRoute from './components/ProtectedRoute'
+import Breadcrumb from './components/Breadcrumb'
 
 function AppContent() {
   const location = useLocation();
@@ -32,6 +34,7 @@ function AppContent() {
         <meta name="description" content="ยกระดับทักษะของคุณด้วย AI — แหล่งเรียนรู้ AI สำหรับคนไทย" />
       </Helmet>
       {!isAdminPage && <Header />}
+      {!isAdminPage && <Breadcrumb />}
       <main>
         <Routes>
           {/* Public Routes */}
@@ -41,8 +44,10 @@ function AppContent() {
           <Route path="/course-detail/:id" element={<CourseDetail />} />
           <Route path="/ai-tools" element={<AIHub />} />
           <Route path="/ai-news" element={<AINews />} />
+          <Route path="/ai-news" element={<AINews />} />
           <Route path="/ai-news/:id" element={<NewsDetail />} />
           <Route path="/ai-terms" element={<AIDictionary />} />
+          <Route path="/ai-terms/:id" element={<AITermDetail />} />
 
           {/* Admin Routes */}
           <Route path="/admin/login" element={<Login />} />
