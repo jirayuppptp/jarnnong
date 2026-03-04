@@ -88,9 +88,11 @@ export default function AITermDetail() {
 
                         <style>{`
                             .rich-text-content p { margin-bottom: 1.5rem; }
-                            .rich-text-content ul { list-style-type: disc !important; padding-left: 2rem !important; margin-bottom: 1.5rem; }
-                            .rich-text-content ol { list-style-type: decimal !important; padding-left: 2rem !important; margin-bottom: 1.5rem; }
-                            .rich-text-content li { display: list-item !important; margin-bottom: 0.5rem; }
+                            .rich-text-content ul { list-style-type: none !important; padding-left: 0 !important; margin-bottom: 1.5rem; }
+                            .rich-text-content ul li { display: block !important; position: relative; padding-left: 1.5rem !important; margin-bottom: 0.5rem; }
+                            .rich-text-content ul li::before { content: ""; position: absolute; left: 0; top: 0.6em; width: 6px; height: 6px; background: #0df2f2; border-radius: 50%; box-shadow: 0 0 10px #0df2f2; }
+                            .rich-text-content ol { list-style-type: decimal !important; padding-left: 1.5rem !important; margin-bottom: 1.5rem; }
+                            .rich-text-content ol li { display: list-item !important; margin-bottom: 0.5rem; }
                             .rich-text-content strong { color: white !important; font-weight: bold !important; }
                             .rich-text-content h1, .rich-text-content h2, .rich-text-content h3 { color: white !important; font-weight: bold !important; margin-top: 2rem; margin-bottom: 1rem; }
                         `}</style>
