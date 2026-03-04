@@ -165,10 +165,10 @@ export default function ManageDictionary() {
     }), [imageHandler]);
 
     return (
-        <div className="space-y-6 animate-in fade-in duration-500">
-            <div className="flex justify-between items-center">
+        <div className="p-4 md:p-8 space-y-6 animate-in fade-in duration-500">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
                 <div>
-                    <h1 className="text-2xl font-black text-white font-display uppercase tracking-wider">Manage AI Glossary</h1>
+                    <h1 className="text-3xl font-black text-white font-display uppercase tracking-tight">Manage AI Glossary</h1>
                     <p className="text-sm text-slate-400">รวบรวมและแปลความหมายคำศัพท์เทคนิคล้ำสมัย (Firestore)</p>
                 </div>
                 <div className="flex gap-3">
