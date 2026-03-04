@@ -12,6 +12,8 @@ export default function AITermDetail() {
     const [error, setError] = useState(null);
 
     useEffect(() => {
+        window.scrollTo(0, 0);
+
         const fetchTerm = async () => {
             try {
                 const docRef = doc(db, 'dictionary', id);
