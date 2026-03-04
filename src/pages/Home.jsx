@@ -1,7 +1,6 @@
 import Hero from '../components/Hero';
 import CourseSection from '../components/CourseSection';
 import { Helmet } from 'react-helmet-async';
-import WhyUs from '../components/WhyUs'
 import CTA from '../components/CTA'
 
 export default function Home() {
@@ -16,7 +15,6 @@ export default function Home() {
 
             <Hero />
             <CourseSection />
-            <WhyUs />
             <CTA />
         </>
     )
