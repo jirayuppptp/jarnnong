@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { NavLink, useParams, useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { db } from '../firebase';
-import { doc, getDoc } from 'firebase/firestore';
+import { doc, getDoc, updateDoc, increment } from 'firebase/firestore';
 import Breadcrumb from '../components/Breadcrumb';
 
 export default function CourseDetail() {
@@ -27,6 +27,12 @@ export default function CourseDetail() {
 
                 if (docSnap.exists()) {
                     setCourse({ id: docSnap.id, ...docSnap.data() });
+
+                    if (id !== 'static-example') {
+                        await updateDoc(docRef, {
+                            views: increment(1)
+                        }).catch(err => console.error("Error updating views:", err));
+                    }
                 } else {
                     console.error("No such course!");
                     // If it's the static example ID or not found, we can handle it

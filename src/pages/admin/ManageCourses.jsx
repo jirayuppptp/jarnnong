@@ -246,6 +246,7 @@ export default function ManageCourses() {
                                 <th className="px-6 py-4">รูปปก</th>
                                 <th className="px-6 py-4">ชื่อหลักสูตร / หมวดหมู่</th>
                                 <th className="px-6 py-4 text-center">ระดับ</th>
+                                <th className="px-6 py-4 text-center">จำนวนคลิก</th>
                                 <th className="px-6 py-4 text-center">ราคา</th>
                                 <th className="px-6 py-4 text-right">จัดการ</th>
                             </tr>
@@ -272,6 +273,9 @@ export default function ManageCourses() {
                                             {course.level || 'Beginner'}
                                         </span>
                                     </td>
+                                    <td className="px-6 py-4 text-center text-sm font-mono text-slate-400">
+                                        {(course.views || 0).toLocaleString()} ครั้ง
+                                    </td>
                                     <td className="px-6 py-4 text-center">
                                         <span className="text-sm font-bold text-[#0df2f2]">{Number(course.price).toLocaleString()} ฿</span>
                                     </td>
@@ -287,7 +291,7 @@ export default function ManageCourses() {
                             ))}
                             {courses.length === 0 && (
                                 <tr>
-                                    <td colSpan="5" className="px-6 py-12 text-center text-slate-500 italic">ไม่พบข้อมูลหลักสูตร</td>
+                                    <td colSpan="6" className="px-6 py-12 text-center text-slate-500 italic">ไม่พบข้อมูลหลักสูตร</td>
                                 </tr>
                             )}
                         </tbody>

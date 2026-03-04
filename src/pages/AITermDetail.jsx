@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { doc, getDoc } from 'firebase/firestore';
+import { doc, getDoc, updateDoc, increment } from 'firebase/firestore';
 import { db } from '../firebase';
 import { Helmet } from 'react-helmet-async';
 import Breadcrumb from '../components/Breadcrumb';
@@ -21,6 +21,11 @@ export default function AITermDetail() {
 
                 if (docSnap.exists()) {
                     setTerm({ id: docSnap.id, ...docSnap.data() });
+
+                    // Increment view counter
+                    await updateDoc(docRef, {
+                        views: increment(1)
+                    }).catch(err => console.error("Error updating views:", err));
                 } else {
                     setError('ไม่พบข้อมูลคำศัพท์');
                 }

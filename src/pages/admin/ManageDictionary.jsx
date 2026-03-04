@@ -198,7 +198,7 @@ export default function ManageDictionary() {
                         <tr className="border-b border-white/5 bg-white/5 text-[10px] uppercase tracking-widest text-[#0df2f2] font-bold">
                             <th className="px-6 py-4">คำศัพท์ (Term)</th>
                             <th className="px-6 py-4">หมวดหมู่</th>
-                            <th className="px-6 py-4">ความหมาย (พรีวิว)</th>
+                            <th className="px-6 py-4 text-center">จำนวนคลิก</th>
                             <th className="px-6 py-4 text-right">จัดการ</th>
                         </tr>
                     </thead>
@@ -211,8 +211,8 @@ export default function ManageDictionary() {
                                         {item.category}
                                     </span>
                                 </td>
-                                <td className="px-6 py-4 text-sm text-slate-400 max-w-md truncate">
-                                    {(item.definition || '').replace(/<[^>]*>?/gm, '')}
+                                <td className="px-6 py-4 text-sm text-slate-400 text-center font-mono">
+                                    {(item.views || 0).toLocaleString()} ครั้ง
                                 </td>
                                 <td className="px-6 py-4 text-right space-x-2">
                                     <button onClick={() => handleOpenModal(item)} className="p-2 text-slate-400 hover:text-white transition-colors">

@@ -1,5 +1,12 @@
+import { Link } from 'react-router-dom';
+
 const menu = ['บทเรียนทั้งหมด', 'เครื่องมือ AI', 'ข่าวสารวงการ AI', 'บทความน่ารู้']
-const knowledge = ['พจนานุกรม AI', 'Prompt Engineering', 'Generative AI', 'AI for Business']
+const knowledge = [
+    { label: 'พจนานุกรม AI', url: '/ai-terms' },
+    { label: 'Prompt Engineering', url: '/ai-terms/Wzdvx397MX96E7tDS3uo' },
+    { label: 'Generative AI', url: '/ai-terms/7TcAoTIWvyH7wtkNGjJW' },
+    { label: 'Vibe Coding', url: '/ai-terms/DiHdTp6lr6ghZvRlQLZT' }
+]
 
 export default function Footer() {
     return (
@@ -35,8 +42,8 @@ export default function Footer() {
                         <h5 className="font-bold text-white mb-6">ความรู้</h5>
                         <ul className="space-y-4 text-sm text-text-secondary">
                             {knowledge.map((item) => (
-                                <li key={item}>
-                                    <a className="hover:text-primary transition-colors" href="#">{item}</a>
+                                <li key={item.label}>
+                                    <Link className="hover:text-primary transition-colors" to={item.url}>{item.label}</Link>
                                 </li>
                             ))}
                         </ul>
