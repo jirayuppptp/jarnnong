@@ -136,10 +136,11 @@ export default function NewsDetail() {
                             .rich-text-content h2 { font-size: 2rem; font-weight: 800; color: white; margin: 2.5rem 0 1.25rem; line-height: 1.3; font-family: 'Kanit', sans-serif; }
                             .rich-text-content h3 { font-size: 1.5rem; font-weight: 700; color: white; margin: 2rem 0 1rem; }
                             .rich-text-content p { margin-bottom: 1.75rem; font-weight: 300; }
-                            .rich-text-content ul { list-style-type: none; padding-left: 0; margin-bottom: 2rem; }
-                            .rich-text-content ul li { position: relative; padding-left: 1.5rem; margin-bottom: 0.75rem; color: #cbd5e1; }
+                            .rich-text-content ul { list-style-type: none !important; padding-left: 0 !important; margin-bottom: 2rem; }
+                            .rich-text-content ul li { display: block !important; position: relative; padding-left: 1.5rem !important; margin-bottom: 0.75rem; color: #cbd5e1; }
                             .rich-text-content ul li::before { content: ""; position: absolute; left: 0; top: 0.6em; width: 6px; height: 6px; background: #0df2f2; border-radius: 50%; box-shadow: 0 0 10px #0df2f2; }
-                            .rich-text-content ol { list-style-type: decimal; padding-left: 1.5rem; margin-bottom: 2rem; color: #cbd5e1; }
+                            .rich-text-content ol { list-style-type: decimal !important; padding-left: 1.5rem !important; margin-bottom: 2rem; color: #cbd5e1; }
+                            .rich-text-content ol li { display: list-item !important; margin-bottom: 0.75rem; }
                             .rich-text-content blockquote { border-left: 4px solid #0df2f2; padding: 1.5rem 2rem; font-style: italic; margin: 3rem 0; background: rgba(13, 242, 242, 0.05); border-radius: 0 20px 20px 0; color: #f8fafc; font-size: 1.25rem; }
                             .rich-text-content a { color: #0df2f2; text-decoration: underline; text-underline-offset: 4px; font-weight: 600; }
                             .rich-text-content img { max-width: 100%; height: auto; border-radius: 24px; margin: 3rem auto; display: block; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 30px 60px -12px rgba(0,0,0,0.5); }
