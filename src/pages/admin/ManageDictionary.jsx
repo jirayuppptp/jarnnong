@@ -21,7 +21,28 @@ export default function ManageDictionary() {
     const [editingItem, setEditingItem] = useState(null);
     const [isMigrating, setIsMigrating] = useState(false);
 
-    const [formData, setFormData] = useState({ term: '', category: 'General AI', definition: '' });
+    const [formData, setFormData] = useState({ term: '', category: '', definition: '' });
+
+    // Auto-categorization logic based on keywords
+    const autoCategorizeTerm = (term, definition) => {
+        const text = `${term} ${definition}`.toLowerCase();
+
+        const rules = [
+            { category: 'Generative AI', keywords: ['generative', 'genai', 'llm', 'create', 'generate', 'text-to', 'chatgpt', 'midjourney', 'stable diffusion', 'gemini', 'claude', 'copilot', 'hallucination'] },
+            { category: 'Prompt Engineering', keywords: ['prompt', 'few-shot', 'zero-shot', 'chain of thought', 'instruction tuning', 'system prompt'] },
+            { category: 'Machine Learning', keywords: ['ml', 'machine learning', 'dataset', 'train', 'model', 'predict', 'regression', 'classification', 'supervised', 'unsupervised', 'algorithm', 'scikit'] },
+            { category: 'Deep Learning', keywords: ['dl', 'deep learning', 'neural network', 'cnn', 'rnn', 'transformer', 'backpropagation', 'epoch', 'gradient'] },
+            { category: 'Natural Language Processing', keywords: ['nlp', 'sentiment', 'translation', 'token', 'language model', 'text processing'] },
+            { category: 'Computer Vision', keywords: ['vision', 'image recognition', 'object detection', 'pixel', 'opencv', 'yolo'] }
+        ];
+
+        for (const rule of rules) {
+            if (rule.keywords.some(kw => text.includes(kw))) {
+                return rule.category;
+            }
+        }
+        return 'General AI';
+    };
 
     useEffect(() => {
         const q = query(collection(db, 'dictionary'), orderBy('term', 'asc'));
@@ -67,20 +88,25 @@ export default function ManageDictionary() {
             setFormData({ ...item });
         } else {
             setEditingItem(null);
-            setFormData({ term: '', category: 'General AI', definition: '' });
+            setFormData({ term: '', category: '', definition: '' });
         }
         setIsModalOpen(true);
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        // Auto-assign category right before saving
+        const finalCategory = autoCategorizeTerm(formData.term, formData.definition);
+        const dataToSave = { ...formData, category: finalCategory };
+
         try {
             if (editingItem) {
                 const docRef = doc(db, 'dictionary', editingItem.id);
-                const { id, ...data } = formData;
+                const { id, ...data } = dataToSave;
                 await updateDoc(docRef, data);
             } else {
-                await addDoc(collection(db, 'dictionary'), formData);
+                await addDoc(collection(db, 'dictionary'), dataToSave);
             }
             setIsModalOpen(false);
         } catch (error) {
@@ -201,14 +227,13 @@ export default function ManageDictionary() {
                                 />
                             </div>
                             <div>
-                                <label className="block text-xs font-bold text-slate-400 mb-2 uppercase tracking-wider">หมวดหมู่</label>
-                                <input
-                                    type="text"
-                                    required
-                                    value={formData.category}
-                                    onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-[#0df2f2]/50 text-sm"
-                                />
+                                <label className="block text-xs font-bold text-slate-400 mb-2 uppercase tracking-wider">หมวดหมู่ (Auto-categorized)</label>
+                                <div className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-slate-300 text-sm italic">
+                                    {autoCategorizeTerm(formData.term, formData.definition) || 'พิมพ์คำศัพท์หรือความหมายเพื่อวิเคราะห์หมวดหมู่...'}
+                                    <span className="ml-2 px-2 py-0.5 rounded-full bg-primary/20 text-primary text-[10px] font-bold not-italic">
+                                        AUTO
+                                    </span>
+                                </div>
                             </div>
                             <div className="quill-container">
                                 <label className="block text-xs font-bold text-slate-400 mb-4 uppercase tracking-wider">คำอธิบายความหมาย (Rich Text)</label>
