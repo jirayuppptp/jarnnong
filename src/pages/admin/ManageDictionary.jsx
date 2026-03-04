@@ -1,6 +1,7 @@
-import { useState, useEffect, useRef, useMemo } from 'react';
+import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import ReactQuill from 'react-quill-new';
 import 'react-quill-new/dist/quill.snow.css';
+import { compressImage } from '../../utils/imageHelper';
 import { db } from '../../firebase';
 import {
     collection,
@@ -126,14 +127,42 @@ export default function ManageDictionary() {
         }
     };
 
+    const imageHandler = useCallback(() => {
+        const input = document.createElement('input');
+        input.setAttribute('type', 'file');
+        input.setAttribute('accept', 'image/*');
+        input.click();
+
+        input.onchange = async () => {
+            const file = input.files[0];
+            if (file) {
+                try {
+                    const compressed = await compressImage(file, 800, 0.7);
+                    const quill = quillRef.current.getEditor();
+                    const range = quill.getSelection();
+                    quill.insertEmbed(range.index, 'image', compressed);
+                    quill.setSelection(range.index + 1);
+                } catch (error) {
+                    console.error('Image upload failed:', error);
+                    alert('เกิดข้อผิดพลาดในการอัปโหลดรูปภาพ');
+                }
+            }
+        };
+    }, []);
+
     const quillModules = useMemo(() => ({
-        toolbar: [
-            [{ 'header': [false] }],
-            ['bold', 'italic', 'underline', 'strike'],
-            [{ 'list': 'ordered' }, { 'list': 'bullet' }],
-            ['link', 'clean']
-        ],
-    }), []);
+        toolbar: {
+            container: [
+                [{ 'header': [false] }],
+                ['bold', 'italic', 'underline', 'strike'],
+                [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+                ['link', 'image', 'clean']
+            ],
+            handlers: {
+                image: imageHandler
+            }
+        }
+    }), [imageHandler]);
 
     return (
         <div className="space-y-6 animate-in fade-in duration-500">
