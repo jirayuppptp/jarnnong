@@ -162,7 +162,10 @@ export default function CourseDetail() {
                                 .quill-editor-content h2 { font-size: 1.5rem; }
                                 .quill-editor-content p { margin-bottom: 1em; }
                                 .quill-editor-content ul { list-style-type: disc !important; padding-left: 2rem !important; margin-bottom: 1em; }
-                                .quill-editor-content ol { list-style-type: decimal !important; padding-left: 2rem !important; margin-bottom: 1em; }
+                                .quill-editor-content ol { list-style-type: decimal !important; padding-left: 2.5rem !important; margin-bottom: 1em; }
+                                .quill-editor-content ol li { list-style-type: decimal !important; padding-left: 0.5rem; }
+                                .quill-editor-content ol li::before { display: none !important; content: none !important; }
+                                .quill-editor-content ol li::marker { color: #0df2f2; font-weight: bold; }
                                 .quill-editor-content li { display: list-item !important; margin-bottom: 0.5em; }
                                 .quill-editor-content strong { color: white; font-weight: 700; }
                                 .quill-editor-content em { font-style: italic; color: #0df2f2; }
