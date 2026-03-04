@@ -82,9 +82,18 @@ export default function AITermDetail() {
                         <div className="w-20 h-1 bg-gradient-to-r from-primary to-secondary rounded-full mb-8"></div>
 
                         <div
-                            className="rich-text-content text-slate-300 text-lg leading-relaxed ql-editor !p-0"
+                            className="rich-text-content text-slate-300 text-lg leading-relaxed ql-editor !p-0 whitespace-pre-wrap"
                             dangerouslySetInnerHTML={{ __html: term.definition }}
                         />
+
+                        <style>{`
+                            .rich-text-content p { margin-bottom: 1.5rem; }
+                            .rich-text-content ul { list-style-type: disc; padding-left: 2rem; margin-bottom: 1.5rem; }
+                            .rich-text-content ol { list-style-type: decimal; padding-left: 2rem; margin-bottom: 1.5rem; }
+                            .rich-text-content li { margin-bottom: 0.5rem; }
+                            .rich-text-content strong { color: white; font-weight: bold; }
+                            .rich-text-content h1, .rich-text-content h2, .rich-text-content h3 { color: white; font-weight: bold; margin-top: 2rem; margin-bottom: 1rem; }
+                        `}</style>
                     </div>
 
                     <div className="flex justify-between items-center animate-fade-up animate-delay-200">
