@@ -55,7 +55,7 @@ export default function CourseSection() {
                         <Link
                             to={`/course-detail/${course.id}`}
                             key={course.id}
-                            className="group relative bg-card-bg border border-white/5 rounded-3xl p-4 transition-all duration-500 hover:border-primary/30 hover:-translate-y-2 flex flex-col block"
+                            className="group relative bg-card-bg border border-white/5 rounded-3xl p-4 transition-all duration-500 hover:border-primary/30 hover:-translate-y-2 flex flex-col hover:shadow-[0_0_15px_rgba(0,242,255,0.15)] block"
                             data-aos="fade-up"
                             data-aos-delay={idx * 100}
                         >

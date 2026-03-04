@@ -48,10 +48,10 @@ export default function WhyUs() {
                     {/* Right: video placeholder */}
                     <div className="relative animate-float">
                         <div className="absolute -inset-4 bg-primary/10 blur-3xl rounded-full opacity-40"></div>
-                        <div className="relative glass-card p-2 shadow-2xl overflow-hidden aspect-video flex items-center justify-center hover-glow transition-all duration-500">
+                        <div className="relative glass-card p-2 shadow-2xl overflow-hidden aspect-video flex items-center justify-center hover-glow transition-all duration-500 group">
                             <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent"></div>
                             <div className="flex flex-col items-center gap-4 relative z-10">
-                                <div className="w-20 h-20 bg-primary/20 rounded-full flex items-center justify-center animate-pulse cursor-pointer hover:bg-primary/30 transition-colors">
+                                <div className="w-20 h-20 bg-primary/20 rounded-full flex items-center justify-center animate-pulse cursor-pointer hover:bg-primary/30 group-hover:scale-110 transition-all duration-500">
                                     <span className="material-symbols-outlined text-primary text-5xl">play_circle</span>
                                 </div>
                                 <span className="text-text-secondary font-medium px-4 py-1.5 bg-white/5 rounded-full border border-white/10">ดูวิดีโอแนะนำ Hub ของเรา</span>

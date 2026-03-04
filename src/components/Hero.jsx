@@ -27,11 +27,11 @@ export default function Hero() {
 
                     {/* CTA Buttons */}
                     <div className="flex flex-col sm:flex-row items-center justify-center gap-4 animate-fade-up animate-delay-300">
-                        <NavLink to="/courses" className="btn-primary w-full sm:w-auto px-8 py-4 flex items-center justify-center gap-2 text-base hover-glow">
+                        <NavLink to="/courses" className="btn-primary w-full sm:w-auto px-8 py-4 flex items-center justify-center gap-2 text-base hover-glow hover:-translate-y-1 active:scale-95 transition-all">
                             <span className="material-symbols-outlined">menu_book</span>
                             รายละเอียดหลักสูตร
                         </NavLink>
-                        <NavLink to="/ai-hub" className="w-full sm:w-auto px-8 py-4 bg-white/5 text-white font-bold rounded-xl border border-white/10 hover:border-primary/30 hover:bg-white/10 transition-all flex items-center justify-center gap-2 text-base">
+                        <NavLink to="/ai-hub" className="w-full sm:w-auto px-8 py-4 bg-white/5 text-white font-bold rounded-xl border border-white/10 hover:border-primary/30 hover:bg-white/10 hover:-translate-y-1 active:scale-95 transition-all flex items-center justify-center gap-2 text-base">
                             <span className="material-symbols-outlined">explore</span>
                             สำรวจเครื่องมือ AI
                         </NavLink>

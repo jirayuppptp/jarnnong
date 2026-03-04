@@ -67,7 +67,7 @@ export default function Header() {
                         </div>
 
                         {isAuthenticated ? (
-                            <NavLink to="/admin/dashboard" className="hidden sm:flex items-center gap-3 bg-white/5 hover:bg-white/10 px-4 py-2 rounded-xl transition-all border border-white/5 group shadow-lg shadow-black/50">
+                            <NavLink to="/admin/dashboard" className="hidden sm:flex items-center gap-3 bg-white/5 hover:bg-white/10 px-4 py-2 rounded-xl transition-all border border-white/5 group shadow-lg shadow-black/50 active:scale-95">
                                 <div className="text-right hidden xl:block">
                                     <p className="text-[10px] font-black text-white leading-none uppercase">Admin Access</p>
                                     <p className="text-[8px] text-primary uppercase mt-1 tracking-widest font-black">Control Panel</p>
@@ -77,7 +77,7 @@ export default function Header() {
                                 </div>
                             </NavLink>
                         ) : (
-                            <NavLink to="/admin/login" className="hidden sm:inline-flex btn-primary px-6 py-2.5 text-xs font-black uppercase tracking-widest text-center rounded-xl shadow-[0_0_15px_rgba(0,242,255,0.2)] hover:shadow-primary/40 transition-all">
+                            <NavLink to="/admin/login" className="hidden sm:inline-flex btn-primary px-6 py-2.5 text-xs font-black uppercase tracking-widest text-center rounded-xl shadow-[0_0_15px_rgba(0,242,255,0.2)] hover:shadow-primary/40 active:scale-95 transition-all">
                                 เข้าสู่ระบบ
                             </NavLink>
                         )}
