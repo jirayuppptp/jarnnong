@@ -3,6 +3,7 @@ import { NavLink, useParams, useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { db } from '../firebase';
 import { doc, getDoc } from 'firebase/firestore';
+import Breadcrumb from '../components/Breadcrumb';
 
 export default function CourseDetail() {
     const { id } = useParams();
@@ -73,6 +74,8 @@ export default function CourseDetail() {
                     <meta property="og:description" content={course?.shortDescription || course?.title || 'รายละเอียดหลักสูตร'} />
                     {course?.image && <meta property="og:image" content={course.image} />}
                 </Helmet>
+
+                <Breadcrumb customEndNode={course.title} />
 
                 {/* Hero Section */}
                 <section className="relative pt-32 pb-20 overflow-hidden mesh-gradient">

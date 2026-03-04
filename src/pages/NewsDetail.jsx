@@ -4,6 +4,7 @@ import { Helmet } from 'react-helmet-async';
 import { db } from '../firebase'
 import { doc, getDoc, updateDoc, increment, collection, query, limit, getDocs } from 'firebase/firestore'
 import { stripHtml } from '../utils/textHelper'
+import Breadcrumb from '../components/Breadcrumb'
 
 export default function NewsDetail() {
     const { id } = useParams()
@@ -71,6 +72,8 @@ export default function NewsDetail() {
                 <meta property="og:description" content={article?.content ? stripHtml(article.content).substring(0, 150) + '...' : 'ข่าวสาร AI ล่าสุดจาก Jarnnong.com'} />
                 {article?.image && <meta property="og:image" content={article.image} />}
             </Helmet>
+
+            <Breadcrumb customEndNode={article.title} />
 
             {/* Post Hero Section */}
             <section className="relative pt-32 pb-20 overflow-hidden mesh-gradient">

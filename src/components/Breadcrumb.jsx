@@ -3,6 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 
 const routeNames = {
     'courses': 'คอร์สเรียน',
+    'course-detail': 'คอร์สเรียน',
     'ai-tools': 'AI Tools',
     'ai-news': 'ข่าวสาร AI',
     'ai-terms': 'พจนานุกรม AI',
@@ -31,7 +32,13 @@ export default function Breadcrumb({ customEndNode }) {
                         </li>
                         {pathnames.map((value, index) => {
                             const last = index === pathnames.length - 1;
-                            const to = `/${pathnames.slice(0, index + 1).join('/')}`;
+
+                            const pathsForLink = [...pathnames];
+                            if (pathsForLink[index] === 'course-detail') {
+                                pathsForLink[index] = 'courses';
+                            }
+                            const to = `/${pathsForLink.slice(0, index + 1).join('/')}`;
+
                             const isIdParam = last && customEndNode && index > 0;
 
                             const label = isIdParam ? customEndNode : (routeNames[value] || decodeURIComponent(value));

@@ -26,6 +26,7 @@ import Breadcrumb from './components/Breadcrumb'
 function AppContent() {
   const location = useLocation();
   const isAdminPage = location.pathname.startsWith('/admin');
+  const isDetailPage = /^\/(ai-news|ai-terms|course-detail)\/.+/.test(location.pathname);
 
   return (
     <>
@@ -34,7 +35,7 @@ function AppContent() {
         <meta name="description" content="ยกระดับทักษะของคุณด้วย AI — แหล่งเรียนรู้ AI สำหรับคนไทย" />
       </Helmet>
       {!isAdminPage && <Header />}
-      {!isAdminPage && <Breadcrumb />}
+      {!isAdminPage && !isDetailPage && <Breadcrumb />}
       <main>
         <Routes>
           {/* Public Routes */}
